@@ -37,6 +37,8 @@ const fileStorage = multer.diskStorage({
   
   app.use("/images", express.static(path.join(__dirname, "images")));
 
+const adminRoutes = require('./routes/admin');
+app.use('/admin', adminRoutes);
 
 
 sequelize
