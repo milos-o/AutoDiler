@@ -1,69 +1,53 @@
 const express = require('express');
-const sequelize = require('./util/database');
-const { json, urlencoded } = require("body-parser");
-app.use(urlencoded({ extended: true }));
-app.use(json());
-
-const User = require('./models/User');
+const passport = require('passport');
+const cookieSession = require('cookie-session');
+require('./passport/google-auth');
 
 const app = express();
-const PORT = process.env.PORT || 5000;
 
+//Configure Session Storage
+app.use(cookieSession({
+  name: 'session-name',
+  keys: ['key1', 'key2']
+}))
 
-const fileStorage = multer.diskStorage({
-    destination: (req, file, cb) => {
-      cb(null, "images");
-    },
-    filename: (req, file, cb) => {
-      cb(null, Date.now() + file.originalname);
-    },
-  });
-  
-  const fileFilter = (req, file, cb) => {
-    if (
-      file.mimetype === "image/png" ||
-      file.mimetype === "image/jpg" ||
-      file.mimetype === "image/jpeg"
-    ) {
-      cb(null, true);
-    } else {
-      cb(null, false);
-    }
-  };
-  
-  app.use(
-    multer({ storage: fileStorage, fileFilter: fileFilter }).single("image")
-  );
-  
-  app.use("/images", express.static(path.join(__dirname, "images")));
+//Configure Passport
+app.use(passport.initialize());
+app.use(passport.session());
 
-const adminRoutes = require('./routes/admin');
-app.use('/admin', adminRoutes);
+//Unprotected Routes
+app.get('/', (req, res) => {
+  res.send('<h1>Home</h1>')
+});
 
+app.get('/failed', (req, res) => {
+  res.send('<h1>Log in Failed :(</h1>')
+});
 
-sequelize
- //.sync({ force: true })
-  .sync()
-  .then(result => {
-    return User.findByPk(1);
-    // console.log(result);
-  })
-  .then(user => {
-    if (!user) {
-      return User.create({ name: 'Max', email: 'test@test.com' });
-    }
-    return user;
-  })
-  .then(user => {
-     console.log(user);
-    //return user.createCart();
-  })
-  .then(cart => {
-    app.listen(3000);
-  })
-  .catch(err => {
-    console.log(err);
-  });
+// Middleware - Check user is Logged in
+const checkUserLoggedIn = (req, res, next) => {
+  req.user ? next(): res.sendStatus(401);
+}
 
+//Protected Route.
+app.get('/profile', checkUserLoggedIn, (req, res) => {
+  res.send(`<h1>${req.user.displayName}'s Profile Page</h1>`)
+});
 
-app.listen(PORT);
+// Auth Routes
+app.get('/auth/google', passport.authenticate('google', { scope: ['profile', 'email'] }));
+
+app.get('/auth/google/callback', passport.authenticate('google', { failureRedirect: '/failed' }),
+  function(req, res) {
+    res.redirect('/profile');
+  }
+);
+
+//Logout
+app.get('/logout', (req, res) => {
+    req.session = null;
+    req.logout();
+    res.redirect('/');
+})
+
+app.listen(3000, () => console.log(`App listening on port ${3000} 🚀🔥`))
