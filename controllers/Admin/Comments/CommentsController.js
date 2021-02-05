@@ -1,4 +1,4 @@
-const Comment = require('../models/Comment');
+const Comment = require('../../../models/Comment');
 
 
 const postAddComment = (req, res, next) => {
@@ -16,42 +16,17 @@ const postAddComment = (req, res, next) => {
     });
 };
 
-const getEditProduct = (req, res, next) => {
-  const editMode = req.query.edit;
-  if (!editMode) {
-    return res.redirect('/');
-  }
-  const prodId = req.params.productId;
-  req.user
-    .getProducts({ where: { id: prodId } })
-    // Product.findById(prodId)
-    .then(products => {
-      const product = products[0];
-      if (!product) {
-        return res.redirect('/');
-      }
-      res.render('admin/edit-product', {
-        pageTitle: 'Edit Product',
-        path: '/admin/edit-product',
-        editing: editMode,
-        product: product
-      });
-    })
-    .catch(err => console.log(err));
-};
-
 const postEditComment = (req, res, next) => {
-  const commentId = req.body.commentId;
+  const commentId = req.body.id;
   const updatedText = req.body.text;
   
-  Product.findById(commentId)
+  Comment.findByPk(commentId)
     .then(comment => {
       comment.text = updatedText;
       return comment.save();
     })
     .then(result => {
-      
-      res.status(200).send("Success");
+      res.status(200).json(result);
     })
     .catch(err => console.log(err));
 };
@@ -79,7 +54,6 @@ const postDeleteComment = (req, res, next) => {
 
 module.exports = {
     postAddComment,
-    getEditProduct,
     postEditComment,
     getAllComments,
     postDeleteComment

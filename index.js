@@ -17,7 +17,7 @@ const Comment = require("./models/Comment");
 const Category = require("./models/Category");
 const Brand = require("./models/Brand");
 const Advertisment = require("./models/Advertisment");
-const UserAdvertisment = require("./models/User-Advertisment");
+const userAdvertisment = require("./models/User-Advertisment");
 
 
 
@@ -63,6 +63,15 @@ app.use(
 app.use(passport.initialize());
 app.use(passport.session());
 
+app.use((req, res, next) => {
+    User.findByPk(1)
+      .then(user => {
+        req.user = user;
+        next();
+      })
+      .catch(err => console.log(err));
+  });
+
 const userRoutes = require("./routes/user");
 const adminRoutes = require("./routes/admin");
 
@@ -71,12 +80,12 @@ app.use(userRoutes);
 
 
 //Product.belongsTo(User, { constraints: true, onDelete: 'CASCADE' });
-//User.hasMany(Comment);
 Comment.belongsTo(User, { constraints: true, onDelete: 'CASCADE' });
+User.hasMany(Comment);
 Brand.hasMany(Model);
 Model.belongsTo(Brand, { constraints: true, onDelete: 'CASCADE' });
-User.belongsToMany(Advertisment, { through: UserAdvertisment });
-Advertisment.belongsToMany(User, { through: UserAdvertisment });
+User.belongsToMany(Advertisment, { through: userAdvertisment });
+Advertisment.belongsToMany(User, { through: userAdvertisment });
 Advertisment.hasMany(Category);
 Advertisment.hasMany(Brand);
 
@@ -84,8 +93,8 @@ Advertisment.hasMany(Brand);
 
 
 sequelize
-  .sync({ force: true })
- // .sync()
+  //.sync({ force: true })
+  .sync()
   .then((result) => {
     return User.findByPk(1);
     // console.log(result);
