@@ -2,14 +2,25 @@ const express = require("express");
 const passport = require("passport");
 const cookieSession = require("cookie-session");
 const sequelize = require("./util/database");
+const multer = require("multer");
+const path = require("path");
 const { json, urlencoded } = require("body-parser");
+
+const app = express();
+
 app.use(urlencoded({ extended: true }));
 app.use(json());
 
 const User = require("./models/User");
-//require('./passport/google-auth');
+const Model = require("./models/Model");
+const Comment = require("./models/Comment");
+const Category = require("./models/Category");
+const Brand = require("./models/Brand");
+const Advertisment = require("./models/Advertisment");
+const UserAdvertisment = require("./models/User-Advertisment");
 
-const app = express();
+
+
 
 const PORT = process.env.PORT || 3000;
 
@@ -52,15 +63,29 @@ app.use(
 app.use(passport.initialize());
 app.use(passport.session());
 
-const userRoutes = require("./routes/users");
+const userRoutes = require("./routes/user");
 const adminRoutes = require("./routes/admin");
 
 app.use("/admin", adminRoutes);
 app.use(userRoutes);
 
+
+//Product.belongsTo(User, { constraints: true, onDelete: 'CASCADE' });
+//User.hasMany(Comment);
+Comment.belongsTo(User, { constraints: true, onDelete: 'CASCADE' });
+Brand.hasMany(Model);
+Model.belongsTo(Brand, { constraints: true, onDelete: 'CASCADE' });
+User.belongsToMany(Advertisment, { through: UserAdvertisment });
+Advertisment.belongsToMany(User, { through: UserAdvertisment });
+Advertisment.hasMany(Category);
+Advertisment.hasMany(Brand);
+
+
+
+
 sequelize
-  //.sync({ force: true })
-  .sync()
+  .sync({ force: true })
+ // .sync()
   .then((result) => {
     return User.findByPk(1);
     // console.log(result);

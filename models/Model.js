@@ -9,7 +9,10 @@ const Model = sequelize.define('model', {
     allowNull: false,
     primaryKey: true
   },
-  name: Sequelize.STRING,
+  name: {
+    type: Sequelize.STRING,
+    allowNull: false
+  }
 });
 
 module.exports = Model;

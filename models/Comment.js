@@ -2,15 +2,18 @@ const Sequelize = require('sequelize');
 
 const sequelize = require('../util/database');
 
-const Car = sequelize.define('car', {
+const Comment = sequelize.define('comment', {
   id: {
     type: Sequelize.INTEGER,
     autoIncrement: true,
     allowNull: false,
     primaryKey: true
   },
-  name: Sequelize.STRING,
+  text: {
+    type: Sequelize.STRING,
+    allowNull: false
+  }
   
 });
 
-module.exports = Car;
+module.exports = Comment;
