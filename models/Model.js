@@ -2,14 +2,14 @@ const Sequelize = require('sequelize');
 
 const sequelize = require('../util/database');
 
-const Advertisment = sequelize.define('advertisment', {
+const Model = sequelize.define('model', {
   id: {
     type: Sequelize.INTEGER,
     autoIncrement: true,
     allowNull: false,
     primaryKey: true
   },
-  name: Sequelize.STRING
+  name: Sequelize.STRING,
 });
 
-module.exports = Advertisment;
+module.exports = Model;
