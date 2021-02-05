@@ -1,5 +1,4 @@
-const Category = require('../../../models/Category');
-
+const Category = require("../../../models/Category");
 
 const postAddCategory = (req, res, next) => {
   const text = req.body.text;
@@ -8,10 +7,10 @@ const postAddCategory = (req, res, next) => {
     .createCategory({
       text: text,
     })
-    .then(result => {
+    .then((result) => {
       res.status(200).json(result);
     })
-    .catch(err => {
+    .catch((err) => {
       console.log(err);
     });
 };
@@ -19,42 +18,41 @@ const postAddCategory = (req, res, next) => {
 const postEditCategory = (req, res, next) => {
   const categoryId = req.body.id;
   const updatedName = req.body.name;
-  
+
   Category.findByPk(categoryId)
-    .then(category => {
-        category.name = updatedName;
+    .then((category) => {
+      category.name = updatedName;
       return category.save();
     })
-    .then(result => {
+    .then((result) => {
       res.status(200).json(result);
     })
-    .catch(err => console.log(err));
+    .catch((err) => console.log(err));
 };
 
 const getAllCategories = (req, res, next) => {
-  
-    Category.findAll()
-    .then(categories => {
+  Category.findAll()
+    .then((categories) => {
       res.status(200).json(categories);
     })
-    .catch(err => console.log(err));
+    .catch((err) => console.log(err));
 };
 
 const postDeleteCategory = (req, res, next) => {
   const categoryId = req.body.id;
   Category.findByPk(categoryId)
-    .then(category => {
+    .then((category) => {
       return category.destroy();
     })
-    .then(result => {
+    .then((result) => {
       res.status(200).send("Deleted!");
     })
-    .catch(err => console.log(err));
+    .catch((err) => console.log(err));
 };
 
 module.exports = {
-    postAddCategory,
-    postEditCategory,
-    getAllCategories,
-    postDeleteCategory
-}
+  postAddCategory,
+  postEditCategory,
+  getAllCategories,
+  postDeleteCategory,
+};

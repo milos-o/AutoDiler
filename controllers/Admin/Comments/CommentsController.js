@@ -1,5 +1,4 @@
-const Comment = require('../../../models/Comment');
-
+const Comment = require("../../../models/Comment");
 
 const postAddComment = (req, res, next) => {
   const text = req.body.text;
@@ -8,10 +7,10 @@ const postAddComment = (req, res, next) => {
     .createComment({
       text: text,
     })
-    .then(result => {
+    .then((result) => {
       res.status(200).json(result);
     })
-    .catch(err => {
+    .catch((err) => {
       console.log(err);
     });
 };
@@ -19,42 +18,41 @@ const postAddComment = (req, res, next) => {
 const postEditComment = (req, res, next) => {
   const commentId = req.body.id;
   const updatedText = req.body.text;
-  
+
   Comment.findByPk(commentId)
-    .then(comment => {
+    .then((comment) => {
       comment.text = updatedText;
       return comment.save();
     })
-    .then(result => {
+    .then((result) => {
       res.status(200).json(result);
     })
-    .catch(err => console.log(err));
+    .catch((err) => console.log(err));
 };
 
 const getAllComments = (req, res, next) => {
-  
-    Comment.findAll()
-    .then(comments => {
+  Comment.findAll()
+    .then((comments) => {
       res.status(200).json(comments);
     })
-    .catch(err => console.log(err));
+    .catch((err) => console.log(err));
 };
 
 const postDeleteComment = (req, res, next) => {
   const commentId = req.body.id;
   Comment.findByPk(commentId)
-    .then(comment => {
+    .then((comment) => {
       return comment.destroy();
     })
-    .then(result => {
+    .then((result) => {
       res.status(200).send("Deleted!");
     })
-    .catch(err => console.log(err));
+    .catch((err) => console.log(err));
 };
 
 module.exports = {
-    postAddComment,
-    postEditComment,
-    getAllComments,
-    postDeleteComment
-}
+  postAddComment,
+  postEditComment,
+  getAllComments,
+  postDeleteComment,
+};
