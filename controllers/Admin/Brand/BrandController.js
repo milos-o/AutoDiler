@@ -1,11 +1,12 @@
 const Brand = require("../../../models/Brand");
+const Model = require("../../../models/Model");
 
 const postAddBrand = (req, res, next) => {
-  const text = req.body.text;
+  const name = req.body.name;
 
-  req.user
-    .createBrand({
-      text: text,
+  
+    Brand.create({
+      name: name,
     })
     .then((result) => {
       res.status(200).json(result);
@@ -50,9 +51,21 @@ const postDeleteBrand = (req, res, next) => {
     .catch((err) => console.log(err));
 };
 
+const findOneBrand = async (req, res, next) => {
+  const brandId = req.body.id;
+  const result = await Brand.findOne({
+    where: {
+      id: brandId,
+    },
+    include: Model,
+  });
+  return res.status(200).json(result);
+};
+
 module.exports = {
   postAddBrand,
   postEditBrand,
   getAllBrands,
   postDeleteBrand,
+  findOneBrand
 };

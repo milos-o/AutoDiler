@@ -2,10 +2,12 @@ const Model = require("../../../models/Model");
 
 const postAddModel = (req, res, next) => {
   const name = req.body.name;
+  const brandId = req.body.id;
 
-  req.user
-    .createModel({
+  
+    Model.create({
       name: name,
+      brandId: brandId
     })
     .then((result) => {
       res.status(200).json(result);

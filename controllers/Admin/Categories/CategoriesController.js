@@ -1,4 +1,5 @@
 const Category = require("../../../models/Category");
+const Model = require("../../../models/Model");
 
 const postAddCategory = (req, res, next) => {
   const text = req.body.text;
@@ -50,9 +51,21 @@ const postDeleteCategory = (req, res, next) => {
     .catch((err) => console.log(err));
 };
 
+const findOneCategory = async (req, res, next) => {
+  const categoryId = req.body.id;
+  const result = await Category.findOne({
+    where: {
+      id: categoryId,
+    },
+    include: Model,
+  });
+  return res.status(200).json(result);
+};
+
 module.exports = {
   postAddCategory,
   postEditCategory,
   getAllCategories,
   postDeleteCategory,
+  findOneCategory
 };

@@ -24,6 +24,8 @@ router.post("/edit-category", adminCategories.postEditCategory);
 router.delete("/delete-category", adminCategories.postDeleteCategory);
 
 router.get("/all-categories", adminCategories.getAllCategories);
+
+router.get("/category", adminCategories.findOneCategory);
 // routes for categorys end
 
 // routes for brands begin
@@ -34,6 +36,8 @@ router.post("/edit-brand", adminBrands.postEditBrand);
 router.delete("/delete-brand", adminBrands.postDeleteBrand);
 
 router.get("/all-brands", adminBrands.getAllBrands);
+
+router.get("/brand", adminBrands.findOneBrand);
 // routes for brands end
 
 // routes for models begin
