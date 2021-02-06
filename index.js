@@ -80,21 +80,22 @@ app.use(userRoutes);
 
 
 //Product.belongsTo(User, { constraints: true, onDelete: 'CASCADE' });
-Comment.belongsTo(User, { constraints: true, onDelete: 'CASCADE' });
 User.hasMany(Comment);
+Comment.belongsTo(User, { constraints: true, onDelete: 'CASCADE' });
 Brand.hasMany(Model);
 Model.belongsTo(Brand, { constraints: true, onDelete: 'CASCADE' });
 User.belongsToMany(Advertisment, { through: userAdvertisment });
 Advertisment.belongsToMany(User, { through: userAdvertisment });
 Advertisment.hasMany(Category);
+Category.belongsTo(Advertisment);
 Advertisment.hasMany(Brand);
-
+Brand.belongsTo(Advertisment);
 
 
 
 sequelize
-  //.sync({ force: true })
-  .sync()
+  .sync({ force: true })
+  //.sync()
   .then((result) => {
     return User.findByPk(1);
     // console.log(result);
