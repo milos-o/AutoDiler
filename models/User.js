@@ -1,3 +1,4 @@
+const { BOOLEAN } = require('sequelize');
 const Sequelize = require('sequelize');
 
 const sequelize = require('../util/database');
@@ -10,7 +11,9 @@ const User = sequelize.define('user', {
     primaryKey: true
   },
   name: Sequelize.STRING,
-  email: Sequelize.STRING
+  email: Sequelize.STRING,
+  password: Sequelize.STRING,
+  isAdmin: Sequelize.BOOLEAN
 });
 
 module.exports = User;

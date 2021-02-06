@@ -1,6 +1,11 @@
 const express = require("express");
 const passport = require("passport");
 require("../passport/google-auth");
+//const { body, validationResult } = require("express-validator");
+const UserController = require("../controllers/User/UserController");
+const User = require("../models/User");
+const bcrypt = require("bcrypt");
+const { isAdmin, isAuth } = require("../middleware/auth");
 
 const router = express.Router();
 
@@ -38,10 +43,15 @@ router.get(
 );
 
 //Logout
-router.get("/logout", (req, res) => {
-  req.session = null;
-  req.logout();
-  res.redirect("/");
-});
+router.get("/logout", UserController.logout);
+
+router.get("/logSucces",(req,res)=>{
+  res.status(200).send("Loged in succesfully!!");
+})
+
+router.post("/login", UserController.login);
+
+router.post("/register", UserController.register;
+
 
 module.exports = router;

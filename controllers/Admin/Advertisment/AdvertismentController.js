@@ -10,17 +10,26 @@ const postAddAdvertisment = async (req, res, next) => {
   const year = req.body.year;
   const mielage = req.body.mielage;
 
- const oglas = await req.user
-    .createAdvertisment({
-        name: name,
-    });
-console.log(oglas);
+  const oglas = await req.user.createAdvertisment({
+    name: name,
+  });
+  console.log(oglas);
 
+  const result = await Promise.all([
+    User.create(),
+    Advertisment.create(),
+  ]).then(([user, advertisment]) =>
+    userAdvertisment.create({
+      userId: req.user.id,
+      advertismentId: advertisment.id,
+      fuel: fuel,
+      carbody: carbody,
+      year: year,
+      mielage: mielage,
+    })
+  );
 
-const result = await Promise.all([User.create(), Advertisment.create()])
-    .then(([user, advertisment]) => userAdvertisment.create({userId: req.user.id, advertismentId: advertisment.id, fuel: fuel, carbody: carbody, year: year, mielage: mielage}))
-
-return res.status(200).json(result);
+  return res.status(200).json(result);
 };
 
 const postEditAdvertisment = (req, res, next) => {
@@ -40,10 +49,10 @@ const postEditAdvertisment = (req, res, next) => {
 
 const getAllAdvertisment = async (req, res, next) => {
   const result = await userAdvertisment.findAll({
-   //   include: [User]
-  })
+    //   include: [User]
+  });
   console.log(result);
-   return res.status(200).json(result);
+  return res.status(200).json(result);
 };
 
 const postDeleteAdvertisment = (req, res, next) => {
@@ -74,5 +83,5 @@ module.exports = {
   postEditAdvertisment,
   getAllAdvertisment,
   postDeleteAdvertisment,
-  findOneAdvertisment
+  findOneAdvertisment,
 };

@@ -12,6 +12,7 @@ app.use(urlencoded({ extended: true }));
 app.use(json());
 
 const User = require("./models/User");
+const Images = require("./models/Images");
 const Model = require("./models/Model");
 const Comment = require("./models/Comment");
 const Category = require("./models/Category");
