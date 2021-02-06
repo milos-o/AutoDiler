@@ -79,22 +79,21 @@ app.use("/admin", adminRoutes);
 app.use(userRoutes);
 
 
-//Product.belongsTo(User, { constraints: true, onDelete: 'CASCADE' });
+
 User.hasMany(Comment);
 Comment.belongsTo(User, { constraints: true, onDelete: 'CASCADE' });
-Brand.hasMany(Model);
-Model.belongsTo(Brand, { constraints: true, onDelete: 'CASCADE' });
 User.belongsToMany(Advertisment, { through: userAdvertisment });
 Advertisment.belongsToMany(User, { through: userAdvertisment });
-Advertisment.hasMany(Category);
-Category.belongsTo(Advertisment);
-Advertisment.hasMany(Brand);
-Brand.belongsTo(Advertisment);
-
+Category.hasMany(Advertisment);
+Advertisment.belongsTo(Category);
+Brand.hasMany(Advertisment);
+Advertisment.belongsTo(Brand);
+Brand.hasMany(Model);
+Model.belongsTo(Brand);
 
 
 sequelize
-  //.sync({ force: true })
+//  .sync({ force: true })
   .sync()
   .then((result) => {
     return User.findByPk(1);

@@ -3,6 +3,7 @@ const adminComments = require("../controllers/Admin/Comments/CommentsController"
 const adminCategories = require("../controllers/Admin/Categories/CategoriesController");
 const adminBrands = require("../controllers/Admin/Brand/BrandController");
 const adminModels = require("../controllers/Admin/Models/ModelsController");
+const adminAdvertisment = require("../controllers/Admin/Advertisment/AdvertismentController");
 
 const router = express.Router();
 
@@ -48,6 +49,17 @@ router.post("/edit-model", adminModels.postEditModel);
 router.delete("/delete-model", adminModels.postDeleteModel);
 
 router.get("/all-models", adminModels.getAllModels);
+// routes for models end
+
+
+// routes for models begin
+router.post("/create-advertisment", adminAdvertisment.postAddAdvertisment);
+
+router.post("/edit-advertisment", adminAdvertisment.postEditAdvertisment);
+
+router.delete("/delete-advertisment", adminAdvertisment.postDeleteAdvertisment);
+
+router.get("/all-advertisment", adminAdvertisment.getAllAdvertisment);
 // routes for models end
 
 module.exports = router;
