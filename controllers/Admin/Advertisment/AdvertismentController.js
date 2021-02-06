@@ -51,20 +51,17 @@ const getAllAdvertisment = async (req, res, next) => {
   const result = await userAdvertisment.findAll({
     //   include: [User]
   });
-  console.log(result);
+  
   return res.status(200).json(result);
 };
 
-const postDeleteAdvertisment = (req, res, next) => {
-  const categoryId = req.body.id;
-  Category.findByPk(categoryId)
-    .then((category) => {
-      return category.destroy();
-    })
-    .then((result) => {
-      res.status(200).send("Deleted!");
-    })
-    .catch((err) => console.log(err));
+const postDeleteAdvertisment = async (req, res, next) => {
+  const advertismentId = req.body.id;
+  const record = await userAdvertisment.findByPk(advertismentId);
+  console.log(record);
+  const result = await record.destroy();
+  return res.status(200).send("Success");
+  
 };
 
 const findOneAdvertisment = async (req, res, next) => {

@@ -94,7 +94,7 @@ Model.belongsTo(Brand);
 
 
 sequelize
-//  .sync({ force: true })
+  //.sync({ force: true })
   .sync()
   .then((result) => {
     return User.findByPk(1);
