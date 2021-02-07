@@ -12,4 +12,5 @@ const Advertisment = sequelize.define('advertisment', {
   name: Sequelize.STRING
 });
 
+
 module.exports = Advertisment;

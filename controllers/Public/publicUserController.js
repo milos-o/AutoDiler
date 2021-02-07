@@ -20,3 +20,22 @@ async function getAllAdds(req,res){
         res.status(400).json(error);
     }
 }
+async function getAddsByUser(req,res){
+
+}
+
+async function getFilteredAdds(req,res){
+
+}
+async function getAddComments(req,res){
+
+}
+
+
+module.exports = {
+    getAddByID,
+    getAllAdds,
+    getAddsByUser,
+    getFilteredAdds,
+    getAddComments
+}
