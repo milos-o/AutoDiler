@@ -18,9 +18,6 @@ const Comment = require("./models/Comment");
 const Category = require("./models/Category");
 const Brand = require("./models/Brand");
 const Advertisment = require("./models/Advertisment");
-const userAdvertisment = require("./models/User-Advertisment");
-
-
 
 
 const PORT = process.env.PORT || 3000;
@@ -80,17 +77,20 @@ app.use("/admin", adminRoutes);
 app.use(userRoutes);
 
 
-
+User.hasMany(Advertisment);
+Advertisment.belongsTo(User, { constraints: true, onDelete: 'CASCADE' });
 User.hasMany(Comment);
 Comment.belongsTo(User, { constraints: true, onDelete: 'CASCADE' });
-User.belongsToMany(Advertisment, { through: userAdvertisment });
-Advertisment.belongsToMany(User, { through: userAdvertisment });
+Advertisment.hasMany(Comment);
+Comment.belongsTo(Advertisment, { constraints: true, onDelete: 'CASCADE' });
 Category.hasMany(Advertisment);
 Advertisment.belongsTo(Category);
 Brand.hasMany(Advertisment);
 Advertisment.belongsTo(Brand);
 Brand.hasMany(Model);
 Model.belongsTo(Brand);
+Advertisment.hasMany(Images);
+Images.belongsTo(Advertisment);
 
 
 sequelize
@@ -108,8 +108,6 @@ sequelize
   })
   .then((user) => {
     console.log(user);
-  })
-  .then((cart) => {
     app.listen(PORT, () => console.log(`App listening on port ${PORT} 🚀🔥`));
   })
   .catch((err) => {

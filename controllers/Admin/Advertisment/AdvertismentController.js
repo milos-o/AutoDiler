@@ -1,5 +1,4 @@
 const Advertisment = require("../../../models/Advertisment");
-const userAdvertisment = require("../../../models/User-Advertisment");
 const Model = require("../../../models/Model");
 const User = require("../../../models/User");
 
@@ -9,7 +8,7 @@ const postAddAdvertisment = async (req, res, next) => {
   const carbody = req.body.carbody;
   const year = req.body.year;
   const mielage = req.body.mielage;
-
+/*
   const oglas = await req.user.createAdvertisment({
     name: name,
   });
@@ -28,7 +27,7 @@ const postAddAdvertisment = async (req, res, next) => {
       mielage: mielage,
     })
   );
-
+*/
   return res.status(200).json(result);
 };
 
