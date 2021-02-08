@@ -1,3 +1,4 @@
+const Advertisment = require("../../models/Advertisment");
 const User = require("../../models/User");
 
 const logout = (req, res, next) => {
@@ -49,8 +50,30 @@ const login = (req, res, next) => {
   })(req, res, next);
 };
 
+const myAdvertisment = async (req, res, next) => {
+  const result = await User.findOne({
+    where: {
+      id: req.user.id,
+    },
+    include: Advertisment,
+  });
+  return res.status(200).json(result);
+}
+/*
+const deleteAdvertisment = async (req, res, next) => {
+  const result = await User.findOne({
+    where: {
+      id: req.user.id,
+    },
+    include: Advertisment,
+  });
+
+  return res.status(200).json(result);
+}
+*/
 module.exports = {
   logout,
   register,
   login,
+  myAdvertisment
 };
