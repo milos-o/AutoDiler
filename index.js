@@ -51,6 +51,15 @@ const adminRoutes = require("./routes/admin");
 app.use("/admin", adminRoutes);
 app.use(userRoutes);
 
+// Error handling middleware
+app.use((error, req, res, next) => {
+  console.log(error);
+  const status = error.statusCode || 500;
+  const message = error.message;
+  const data = error.data;
+  res.status(status).json({ message: message, data: data });
+});
+
 
 User.hasMany(Advertisment);
 Advertisment.belongsTo(User, { constraints: true, onDelete: 'CASCADE' });

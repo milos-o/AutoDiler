@@ -6,7 +6,6 @@ const User = require("../../../models/User");
 const Comment = require("../../../models/Comment");
 const Images = require("../../../models/Images");
 
-
 const postAddAdvertisment = async (req, res, next) => {
   const name = req.body.name;
   const fuel = req.body.fuel;
@@ -17,24 +16,31 @@ const postAddAdvertisment = async (req, res, next) => {
   const categoryId = req.body.categoryId;
   const images = req.files;
   console.log(images);
-  images.forEach(image => {
+  images.forEach((image) => {
     Images.create({
       path: image.path,
-      advertismentId: 1
+      advertismentId: 1,
     });
   });
 
-  const result = await Advertisment.create({
-    userId: req.user.id,
-    fuel: fuel,
-    carbody: carbody,
-    year: year,
-    mielage: mielage,
-    brandId: brandId,
-    categoryId: categoryId,
-  });
+  try {
+    const result = await Advertisment.create({
+      userId: req.user.id,
+      fuel: fuel,
+      carbody: carbody,
+      year: year,
+      mielage: mielage,
+      brandId: brandId,
+      categoryId: categoryId,
+    });
 
-  return res.status(200).json(result);
+    return res.status(200).json(result);
+  } catch (err) {
+    if (!err.statusCode) {
+      err.statusCode = 500;
+    }
+    next(err);
+  }
 };
 
 const postEditAdvertisment = (req, res, next) => {
@@ -59,54 +65,83 @@ const postEditAdvertisment = (req, res, next) => {
 };
 
 const getAllAdvertisment = async (req, res, next) => {
-  const result = await Advertisment.findAll({
-    include: [
-      {
-        model: User,
-        required: true,
-      },
-      {
-        model: Brand,
-        required: true,
-      },
-      {
-        model: Category,
-        required: true,
-      },
-    ],
-  });
+  try {
+    const result = await Advertisment.findAll({
+      include: [
+        {
+          model: User,
+          required: true,
+        },
+        {
+          model: Brand,
+          required: true,
+        },
+        {
+          model: Category,
+          required: true,
+        },
+      ],
+    });
 
-  return res.status(200).json(result);
+    return res.status(200).json(result);
+  } catch (err) {
+    if (!err.statusCode) {
+      err.statusCode = 500;
+    }
+    next(err);
+  }
 };
 
 const postDeleteAdvertisment = async (req, res, next) => {
   const advertismentId = req.body.id;
-  const record = await Advertisment.findByPk(advertismentId);
-  const result = await record.destroy();
-  return res.status(200).send("Success");
+  try {
+    const record = await Advertisment.findByPk(advertismentId);
+    const result = await record.destroy();
+    return res.status(200).send("Success");
+  } catch (err) {
+    if (!err.statusCode) {
+      err.statusCode = 500;
+    }
+    next(err);
+  }
 };
 
 const findOneAdvertisment = async (req, res, next) => {
   const advertismentId = req.body.id;
-  const result = await Advertisment.findOne({
-    where: {
-      id: advertismentId,
-    },
-    include: Model,
-  });
-  return res.status(200).json(result);
+
+  try {
+    const result = await Advertisment.findOne({
+      where: {
+        id: advertismentId,
+      },
+      include: Model,
+    });
+    return res.status(200).json(result);
+  } catch (err) {
+    if (!err.statusCode) {
+      err.statusCode = 500;
+    }
+    next(err);
+  }
 };
 
 const findAllCommentsForAdvertisment = async (req, res, next) => {
   const advertismentId = req.body.id;
-  const result = await Advertisment.findOne({
-    where: {
-      id: advertismentId,
-    },
-    include: Comment,
-  });
-  return res.status(200).json(result);
-}
+  try {
+    const result = await Advertisment.findOne({
+      where: {
+        id: advertismentId,
+      },
+      include: Comment,
+    });
+    return res.status(200).json(result);
+  } catch (err) {
+    if (!err.statusCode) {
+      err.statusCode = 500;
+    }
+    next(err);
+  }
+};
 
 module.exports = {
   postAddAdvertisment,
@@ -114,5 +149,5 @@ module.exports = {
   getAllAdvertisment,
   postDeleteAdvertisment,
   findOneAdvertisment,
-  findAllCommentsForAdvertisment
+  findAllCommentsForAdvertisment,
 };
