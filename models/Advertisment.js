@@ -9,7 +9,13 @@ const Advertisment = sequelize.define('advertisment', {
     allowNull: false,
     primaryKey: true
   },
-  name: Sequelize.STRING
+  name: Sequelize.STRING,
+  carbody: Sequelize.STRING,
+  image: Sequelize.STRING,
+  fuel: Sequelize.STRING,
+  mielage: Sequelize.INTEGER,
+  cubic: Sequelize.INTEGER,
+  year: Sequelize.DATE
 });
 
 

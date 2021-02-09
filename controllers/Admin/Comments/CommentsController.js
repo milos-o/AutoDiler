@@ -1,18 +1,15 @@
 const Comment = require("../../../models/Comment");
 
-const postAddComment = (req, res, next) => {
+const postAddComment = async (req, res, next) => {
   const text = req.body.text;
+  const advertismentId = req.body.advertismentId;
 
-  req.user
-    .createComment({
-      text: text,
-    })
-    .then((result) => {
-      res.status(200).json(result);
-    })
-    .catch((err) => {
-      console.log(err);
-    });
+  const result = await req.user.createComment({
+    text: text,
+    advertismentId: advertismentId,
+  });
+
+  return res.status(200).json(result);
 };
 
 const postEditComment = (req, res, next) => {

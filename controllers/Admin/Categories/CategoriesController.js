@@ -1,19 +1,14 @@
 const Category = require("../../../models/Category");
 const Model = require("../../../models/Model");
 
-const postAddCategory = (req, res, next) => {
-  const text = req.body.text;
+const postAddCategory = async (req, res, next) => {
+  const name = req.body.name;
 
-  req.user
-    .createCategory({
-      text: text,
-    })
-    .then((result) => {
-      res.status(200).json(result);
-    })
-    .catch((err) => {
-      console.log(err);
-    });
+  const result = await Category.create({
+    name: name,
+  });
+
+  return res.status(200).json(result);
 };
 
 const postEditCategory = (req, res, next) => {
@@ -67,5 +62,5 @@ module.exports = {
   postEditCategory,
   getAllCategories,
   postDeleteCategory,
-  findOneCategory
+  findOneCategory,
 };

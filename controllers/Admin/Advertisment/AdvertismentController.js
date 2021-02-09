@@ -1,7 +1,11 @@
 const Advertisment = require("../../../models/Advertisment");
-const userAdvertisment = require("../../../models/User-Advertisment");
+const Category = require("../../../models/Category");
+const Brand = require("../../../models/Brand");
 const Model = require("../../../models/Model");
 const User = require("../../../models/User");
+const Comment = require("../../../models/Comment");
+const Images = require("../../../models/Images");
+
 
 const postAddAdvertisment = async (req, res, next) => {
   const name = req.body.name;
@@ -9,37 +13,44 @@ const postAddAdvertisment = async (req, res, next) => {
   const carbody = req.body.carbody;
   const year = req.body.year;
   const mielage = req.body.mielage;
-
-  const oglas = await req.user.createAdvertisment({
-    name: name,
+  const brandId = req.body.brandId;
+  const categoryId = req.body.categoryId;
+  const images = req.files;
+  console.log(images);
+  images.forEach(image => {
+    Images.create({
+      path: image.path,
+      advertismentId: 1
+    });
   });
-  console.log(oglas);
 
-  const result = await Promise.all([
-    User.create(),
-    Advertisment.create(),
-  ]).then(([user, advertisment]) =>
-    userAdvertisment.create({
-      userId: req.user.id,
-      advertismentId: advertisment.id,
-      fuel: fuel,
-      carbody: carbody,
-      year: year,
-      mielage: mielage,
-    })
-  );
+  const result = await Advertisment.create({
+    userId: req.user.id,
+    fuel: fuel,
+    carbody: carbody,
+    year: year,
+    mielage: mielage,
+    brandId: brandId,
+    categoryId: categoryId,
+  });
 
   return res.status(200).json(result);
 };
 
 const postEditAdvertisment = (req, res, next) => {
-  const categoryId = req.body.id;
+  const adverismentId = req.body.id;
   const updatedName = req.body.name;
+  const updatedFuel = req.body.fuel;
+  const updatedCarbody = req.body.carbody;
+  const updatedYear = req.body.year;
+  const updatedMielage = req.body.mielage;
+  const updatedBrand = req.body.brandId;
+  const updatedCategory = req.body.categoryId;
 
-  Category.findByPk(categoryId)
-    .then((category) => {
-      category.name = updatedName;
-      return category.save();
+  Advertisment.findByPk(adverismentId)
+    .then((advertisment) => {
+      advertisment.name = updatedName;
+      return advertisment.save();
     })
     .then((result) => {
       res.status(200).json(result);
@@ -48,32 +59,54 @@ const postEditAdvertisment = (req, res, next) => {
 };
 
 const getAllAdvertisment = async (req, res, next) => {
-  const result = await userAdvertisment.findAll({
-    //   include: [User]
+  const result = await Advertisment.findAll({
+    include: [
+      {
+        model: User,
+        required: true,
+      },
+      {
+        model: Brand,
+        required: true,
+      },
+      {
+        model: Category,
+        required: true,
+      },
+    ],
   });
-  
+
   return res.status(200).json(result);
 };
 
 const postDeleteAdvertisment = async (req, res, next) => {
   const advertismentId = req.body.id;
-  const record = await userAdvertisment.findByPk(advertismentId);
-  console.log(record);
+  const record = await Advertisment.findByPk(advertismentId);
   const result = await record.destroy();
   return res.status(200).send("Success");
-  
 };
 
 const findOneAdvertisment = async (req, res, next) => {
-  const categoryId = req.body.id;
-  const result = await Category.findOne({
+  const advertismentId = req.body.id;
+  const result = await Advertisment.findOne({
     where: {
-      id: categoryId,
+      id: advertismentId,
     },
     include: Model,
   });
   return res.status(200).json(result);
 };
+
+const findAllCommentsForAdvertisment = async (req, res, next) => {
+  const advertismentId = req.body.id;
+  const result = await Advertisment.findOne({
+    where: {
+      id: advertismentId,
+    },
+    include: Comment,
+  });
+  return res.status(200).json(result);
+}
 
 module.exports = {
   postAddAdvertisment,
@@ -81,4 +114,5 @@ module.exports = {
   getAllAdvertisment,
   postDeleteAdvertisment,
   findOneAdvertisment,
+  findAllCommentsForAdvertisment
 };
