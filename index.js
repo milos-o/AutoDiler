@@ -68,6 +68,8 @@ Advertisment.hasMany(Images);
 Images.belongsTo(Advertisment);
 
 
+
+
 sequelize
   //.sync({ force: true })
   .sync()
