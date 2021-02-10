@@ -67,12 +67,12 @@ User.hasMany(Comment);
 Comment.belongsTo(User, { constraints: true, onDelete: 'CASCADE' });
 Advertisment.hasMany(Comment);
 Comment.belongsTo(Advertisment, { constraints: true, onDelete: 'CASCADE' });
-Category.hasMany(Advertisment);
-Advertisment.belongsTo(Category);
-Brand.hasMany(Advertisment);
-Advertisment.belongsTo(Brand);
+Category.hasMany(Model);
+Model.belongsTo(Category);
 Brand.hasMany(Model);
 Model.belongsTo(Brand);
+Model.hasMany(Advertisment);
+Advertisment.belongsTo(Model);
 Advertisment.hasMany(Images);
 Images.belongsTo(Advertisment);
 
