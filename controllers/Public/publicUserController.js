@@ -1,8 +1,9 @@
 const { Model } = require('sequelize');
 const Advertisment = require('../../models/Advertisment');
 const Sequelize = require('sequelize');
-const Brand = require('../../models/Brand');
-
+const User = require('../../models/User');
+const CarModel=require('../../models/Model');
+const Brand=require('../../models/Brand');
 
 async function getAddByID(req,res,next){
     let id = req.params.id;
@@ -20,7 +21,23 @@ async function getAddByID(req,res,next){
 
 async function getAllAdds(req,res,next){
     try {        
-        let adds = await Advertisment.findAll();
+        let adds = await Advertisment.findAll({
+            include:[
+                {
+                    model: CarModel,
+                    required: true,
+                    include:[{
+                        model:Brand,
+                        required:true,
+                    }]
+                },
+                {
+                    model:User,
+                    required:true,
+                    
+                }
+            ]
+        });
         res.status(200).json(adds);
     } catch (error) {
         if(!error.statusCode){
@@ -34,13 +51,9 @@ async function getAddsByUser(req,res,next){
     try {
         let adds = await Advertisment.findAll({
             where:{
-                "$User.name": username
+                userId: username
             },
             include:[
-                {
-                    model: User,
-                    as: "User"
-                },
                 {
                     model: Model,
                     include: Brand

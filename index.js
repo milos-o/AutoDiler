@@ -44,12 +44,13 @@ app.use((req, res, next) => {
       })
       .catch(err => console.log(err));
   });
-
+const publicRoutes = require("./routes/public");
 const userRoutes = require("./routes/user");
 const adminRoutes = require("./routes/admin");
 
 app.use("/admin", adminRoutes);
 app.use(userRoutes);
+app.use(publicRoutes);
 
 // Error handling middleware
 app.use((error, req, res, next) => {
