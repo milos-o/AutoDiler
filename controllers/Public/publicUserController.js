@@ -8,7 +8,20 @@ const Brand=require('../../models/Brand');
 async function getAddByID(req,res,next){
     let id = req.params.id;
     try {        
-        let add = await Advertisment.findByPk(id);
+        let add = await Advertisment.findOne({
+            where:{
+               id:id 
+            },
+            attributes:{exclude:["modelId"]},
+            include:{
+                model:CarModel,
+                attributes: ["id","name"],
+                include:{
+                    model:Brand,
+                    attributes: ["id","name"],
+                }
+            }
+        })
         console.log(add);
         res.status(200).json(add);
     } catch (error) {
@@ -23,17 +36,18 @@ async function getAllAdds(req,res,next){
     try {        
         let adds = await Advertisment.findAll({
             include:[
-                {
-                    model: CarModel,
-                    required: true,
-                    include:[{
+                {       
+                    model:CarModel,
+                    attributes: ["id","name"],
+                    include:{
                         model:Brand,
-                        required:true,
-                    }]
+                        attributes: ["id","name"],
+                    }
                 },
                 {
                     model:User,
                     required:true,
+                    attributes:["id","username","email"]
                     
                 }
             ]
@@ -70,8 +84,6 @@ async function getAddsByUser(req,res,next){
 }
 
 async function getFilteredAdds(req,res,next){
-    let modelId = req.query.modelId;
-    let brandId = req.query.brandId;
     let startYear = req.query.startYear;
     let endYear = req.query.endYear;
     let fuel = req.query.fuel;
@@ -80,7 +92,17 @@ async function getFilteredAdds(req,res,next){
     let maxHp=req.query.maxHp;
     let minCC=req.query.minCC;
     let maxCC=req.query.maxCC;
+    if(!startYear) startYear=0;
+    if(!endYear) endYear=0;
+    //promjenit....
+    if(!fuel) fuel=[];
+    
+    let modelId = req.query.modelId;
+    let brandId = req.query.brandId;
+    if(modelId){
 
+    }
+    
 
 
 

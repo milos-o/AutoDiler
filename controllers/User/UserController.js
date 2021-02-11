@@ -62,6 +62,25 @@ const myAdvertisment = async (req, res, next) => {
   });
   return res.status(200).json(result);
 }
+
+//need to be updated
+async function addNewAdd(req,res,next){
+  try {
+    let userId=req.user.id;
+    let add = await Advertisment.create({
+      name:req.body.name,
+      carbody:req.body.carbody,
+      fuel:req.body.fuel,
+      mielage:req.body.mileage,
+      userId: userId,
+      modelId:req.body.model
+    })
+    res.status(203).json(add);
+  } catch (error) {
+    if(!error.statusCode) error.statusCode=400;
+    next(error);
+  }
+}
 /*
 const deleteAdvertisment = async (req, res, next) => {
   const result = await User.findOne({
@@ -79,5 +98,6 @@ module.exports = {
   logout,
   register,
   login,
-  myAdvertisment
+  myAdvertisment,
+  addNewAdd
 };

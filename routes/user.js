@@ -55,4 +55,6 @@ router.post("/register", UserController.register);
 
 router.get("/my-advertisment", UserController.myAdvertisment);
 
+router.post("/add-advertisment",UserController.addNewAdd);
+
 module.exports = router;
