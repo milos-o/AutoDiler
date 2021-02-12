@@ -29,14 +29,10 @@ router.get("/profile", checkUserLoggedIn, (req, res) => {
 });
 
 // Auth Routes
-router.get(
-  "/auth/google",
-  passport.authenticate("google", { scope: ["profile", "email"] })
+router.get("/auth/google", passport.authenticate("google", { scope: ["profile", "email"] })
 );
 
-router.get(
-  "/auth/google/callback",
-  passport.authenticate("google", { failureRedirect: "/failed" }),
+router.get("/auth/google/callback", passport.authenticate("google", { failureRedirect: "/failed" }),
   function (req, res) {
     res.redirect("/profile");
   }
@@ -45,14 +41,16 @@ router.get(
 //Logout
 router.get("/logout", UserController.logout);
 
-router.get("/logSucces",(req,res)=>{
+router.get("/logSucces", (req, res) => {
   res.status(200).send("Loged in succesfully!!");
-})
+});
 
 router.post("/login", UserController.login);
 
 router.post("/register", UserController.register);
 
 router.get("/my-advertisment", UserController.myAdvertisment);
+
+router.get("/confirmation/:code", UserController.verifyEmail);
 
 module.exports = router;
