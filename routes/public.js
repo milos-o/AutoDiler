@@ -10,6 +10,8 @@ router.get("/adds",publicController.getAllAdds);
 router.get("/adds/search",publicController.getFilteredAdds);
 //oglasi odredjenog korisnika
 router.get("/adds/:username",publicController.getAddsByUser);
+//komentari za konkretni oglas
+router.get("/comments/:addId",publicController.getAddComments);
 
 
 
