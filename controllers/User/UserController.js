@@ -81,6 +81,8 @@ async function addNewAdd(req,res,next){
     next(error);
   }
 }
+
+
 /*
 const deleteAdvertisment = async (req, res, next) => {
   const result = await User.findOne({
@@ -93,11 +95,56 @@ const deleteAdvertisment = async (req, res, next) => {
   return res.status(200).json(result);
 }
 */
+``
+async function editAdd(req,res,next){
+  let id = req.params.addId;
+  const {name,carbody,fuel,mileage,cubicCapacity,year,model}=req.body;
+
+  if(!id) next(new Error("Missing params! No id of add to be edited!!"));
+  try {
+    let add = await Advertisment.findByPk(id);
+    if(add.userId!=req.user.id) next(new Error("You dont have premissions for this action"))
+    if(name) add["name"]=name;
+    if(carbody) add["carbody"]=carbody;
+    if(fuel) add["fuel"]=fuel;
+    if(mileage) add["mielage"]=mileage;
+    if(cubicCapacity) add["cubic"]=cubicCapacity;
+    if(year) add["year"]=year;
+    if(model) add["model"]=model;
+
+    await add.save();
+    await add.reload();
+    res.status(200).json(add);
+  } catch (error) {
+      if(!error.statusCode){
+        error.statusCode=400;
+    }
+    next(error);
+  }
+}
+
+
+async function deleteAdd(req,res,next){
+  let id = req.params.addId;
+  try {
+    let add = await Advertisment.findByPk(id);
+    
+    add.destroy();
+    res.status(200).json(`Add with id:${id} deleted`);
+  } catch (error) {
+      if(!error.statusCode){
+        error.statusCode=400;
+    }
+    next(error);
+  }
+}
 
 module.exports = {
   logout,
   register,
   login,
   myAdvertisment,
-  addNewAdd
+  addNewAdd,
+  editAdd,
+  deleteAdd,
 };

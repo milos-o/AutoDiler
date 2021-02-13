@@ -57,4 +57,8 @@ router.get("/my-advertisment", UserController.myAdvertisment);
 
 router.post("/add-advertisment",UserController.addNewAdd);
 
+router.put("/edit-add/:addId",UserController.editAdd);
+
+router.delete("/delete-add/:addId")
+
 module.exports = router;

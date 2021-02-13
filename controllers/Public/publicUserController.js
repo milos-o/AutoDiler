@@ -5,6 +5,7 @@ const User = require('../../models/User');
 const CarModel=require('../../models/Model');
 const Brand=require('../../models/Brand');
 const Comment=require('../../models/Comment');
+const Op=Sequelize.Op;
 
 async function getAddByID(req,res,next){
     let id = req.params.id;
@@ -106,28 +107,100 @@ async function getAddsByUser(req,res,next){
     }
 }
 
-//need to be updated
+//need to be updated!!!
 async function getFilteredAdds(req,res,next){
-    let startYear = req.query.startYear;
-    let endYear = req.query.endYear;
-    let fuel = req.query.fuel;
-    let transmission = req.query.transmission;
-    let minHp= req.query.minHp;
-    let maxHp=req.query.maxHp;
-    let minCC=req.query.minCC;
-    let maxCC=req.query.maxCC;
-    if(!startYear) startYear=0;
-    if(!endYear) endYear=0;
+    let where1={};
+    let where2={};
+    let where3={};
+    
+    if(req.query.startYear && req.query.endYear){
+        where1['year']={
+            [Op.between]:[req.query.startYear,req.query.endYear]
+        }
+    }else if(req.query.startYear){
+        where1['year']={
+           [Op.gte]:req.query.startYear
+        }
+    }else if(req.query.endYear){
+
+        where1['year']={
+            [Op.lte]:req.query.endYear
+        }
+    }
+
+    if(req.query.fuel) where1['fuel']=req.query.fuel;
+   
+    if(req.query.minCC && req.query.maxCC){
+        where1['cubic']={
+            [Op.between]:[req.query.minCC,req.query.maxCC]
+        }
+    }else if(req.query.minCC){
+        where1['cubic']={
+            [Op.gte]:req.query.minCC
+         }
+    }else if(req.query.maxCC){
+        where1['cubic']={
+            [Op.lte]:req.query.maxCC
+         }
+    }
     
     let pageNumber = req.query.page;
     if(!pageNumber) pageNumber=1;
     //promjenit....
     //if(!fuel) fuel=[];
-    
-    let modelId = req.query.modelId;
-    let brandId = req.query.brandId;
-    if(modelId){
-
+    if(req.query.modelId){
+        where2['id']=req.query.modelId;
+    }
+    if(req.query.brandId){
+        where3['id']=req.query.brandId;
+    }
+    try {
+       
+        let criteria=
+        {
+        
+            attributes:{exclude:["modelId","userId"]},
+            where:where1,
+            include:[
+                {      
+                    model:CarModel,
+                    attributes: ["id","name"],
+                    include:{
+                        model:Brand,
+                        attributes: ["id","name"],
+                        where:where2,
+                        
+                    },
+                    where:where3,
+                },
+                {
+                    model:User,
+                    required:true,
+                    attributes:["id","username","email"],
+                    
+                }
+            ],
+            
+        }
+        
+        let totalAdds = await Advertisment.count();  
+        
+        //ading limits
+        criteria.limit=20;
+        criteria.order=[['createdAt','DESC']];
+        criteria.offset=((pageNumber-1)*20);
+        
+        let adds = await Advertisment.findAll(criteria);
+        let result ={
+            adds: adds,
+            total: totalAdds
+        }
+        res.status(200).json(result);
+    } catch (error) {
+        if(!error.statusCode){
+            error.statusCode=400;
+        }
+        next(error);
     }
     
 
@@ -150,6 +223,9 @@ async function getAddComments(req,res,next){
         });
         res.status(200).json(comments);
     } catch (error) {
+        if(!error.statusCode){
+            error.statusCode=400;
+        }
         next(error);
     }
 }
