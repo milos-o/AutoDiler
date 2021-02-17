@@ -53,4 +53,6 @@ router.get("/my-advertisment", UserController.myAdvertisment);
 
 router.get("/confirmation/:code", UserController.verifyEmail);
 
+router.get("/reset/:token", UserController.getResetPassword);
+
 module.exports = router;

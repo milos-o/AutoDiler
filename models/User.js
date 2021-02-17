@@ -1,40 +1,3 @@
-
-/*export default (sequelize, DataTypes) => {
-  const User = sequelize.define('User', {
-    username: {
-      type: DataTypes.STRING,
-      unique: true,
-    },
-    email: {
-      type: DataTypes.STRING,
-      unique: true,
-    },
-    password: DataTypes.STRING,
-    confirmed: {
-      type: DataTypes.BOOLEAN,
-      defaultValue: false,
-    },
-    isAdmin: {
-      type: DataTypes.BOOLEAN,
-      defaultValue: false,
-    },
-  });
-
-  User.associate = (models) => {
-    // 1 to many with board
-    User.hasMany(models.Advertisment, {
-      foreignKey: 'owner',
-    });
-    // 1 to many with suggestion
-    User.hasMany(models.Comment, {
-      foreignKey: 'creatorId',
-    });
-  };
-
-  return User;
-};
-*/
-
 const { BOOLEAN } = require('sequelize');
 const Sequelize = require('sequelize');
 
@@ -47,18 +10,29 @@ const User = sequelize.define('user', {
     allowNull: false,
     primaryKey: true
   },
-  name: Sequelize.STRING,
-  email: Sequelize.STRING,
+  name: {
+   type: Sequelize.STRING,
+   allowNull: false
+  },
+  email: {
+    type: Sequelize.STRING,
+    allowNull: false,
+    unique: true
+  },
   password: Sequelize.STRING,
-  isAdmin: Sequelize.BOOLEAN,
+  isAdmin: {
+   type: Sequelize.BOOLEAN,
+   defaultValue: false
+  },
   verificationToken: {
     type: Sequelize.STRING,
-    defaultValue: false,
   },
   emailVerified:{
     type: Sequelize.BOOLEAN,
     defaultValue: false
-  }
+  },
+  resetToken: String,
+  resetTokenExpiration: Date
 });
 
 module.exports = User;
