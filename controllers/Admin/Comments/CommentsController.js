@@ -1,8 +1,14 @@
 const Comment = require("../../../models/Comment");
+const { validationResult } = require('express-validator/check');
 
 const postAddComment = async (req, res, next) => {
   const text = req.body.text;
   const advertismentId = req.body.advertismentId;
+ 
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.status(422).json(errors.array());
+  }
 
   const result = await req.user.createComment({
     text: text,
@@ -16,6 +22,12 @@ const postEditComment = (req, res, next) => {
   const commentId = req.body.id;
   const updatedText = req.body.text;
 
+   
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.status(422).json(errors.array());
+  }
+  
   Comment.findByPk(commentId)
     .then((comment) => {
       comment.text = updatedText;

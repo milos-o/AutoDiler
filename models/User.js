@@ -19,7 +19,14 @@ const User = sequelize.define('user', {
     allowNull: false,
     unique: true
   },
-  password: Sequelize.STRING,
+  password: {
+    type: Sequelize.STRING,
+    allowNull: false
+  },
+  location: {
+    type: Sequelize.STRING,
+    allowNull: false
+  },
   isAdmin: {
    type: Sequelize.BOOLEAN,
    defaultValue: false
@@ -31,8 +38,12 @@ const User = sequelize.define('user', {
     type: Sequelize.BOOLEAN,
     defaultValue: false
   },
-  resetToken: String,
-  resetTokenExpiration: Date
+  resetToken:{
+    type: Sequelize.STRING
+  },
+  resetTokenExpiration:{
+     type: Sequelize.DATE
+  } 
 });
 
 module.exports = User;

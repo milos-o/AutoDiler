@@ -1,9 +1,13 @@
 const Brand = require("../../../models/Brand");
 const Model = require("../../../models/Model");
+const { validationResult } = require('express-validator/check');
 
 const postAddBrand = (req, res, next) => {
   const name = req.body.name;
-
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.status(422).json(errors.array());
+  }
   
     Brand.create({
       name: name,
@@ -19,7 +23,10 @@ const postAddBrand = (req, res, next) => {
 const postEditBrand = (req, res, next) => {
   const brandId = req.body.id;
   const updatedName = req.body.name;
-
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.status(422).json(errors.array());
+  }
   Brand.findByPk(brandId)
     .then((brand) => {
       brand.name = updatedName;

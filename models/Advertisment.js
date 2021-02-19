@@ -10,12 +10,26 @@ const Advertisment = sequelize.define('advertisment', {
     primaryKey: true
   },
   name: Sequelize.STRING,
-  carbody: Sequelize.STRING,
-  image: Sequelize.STRING,
-  fuel: Sequelize.STRING,
-  mielage: Sequelize.INTEGER,
-  cubic: Sequelize.INTEGER,
-  year: Sequelize.DATE
+  carbody: {
+    type: Sequelize.STRING,
+    allowNull: false
+  },
+  fuel: {
+    type: Sequelize.STRING,
+    allowNull: false
+  },
+  mielage: {
+    type: Sequelize.INTEGER,
+    allowNull: false
+  },
+  cubic: {
+    type: Sequelize.INTEGER,
+    allowNull: false
+  },
+  year: {
+    type: Sequelize.DATE,
+    allowNull: false
+  },
 });
 
 module.exports = Advertisment;

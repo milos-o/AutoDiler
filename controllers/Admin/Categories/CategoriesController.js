@@ -1,9 +1,13 @@
 const Category = require("../../../models/Category");
 const Model = require("../../../models/Model");
+const { validationResult } = require('express-validator/check');
 
 const postAddCategory = async (req, res, next) => {
   const name = req.body.name;
-
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.status(422).json(errors.array());
+  }
   const result = await Category.create({
     name: name,
   });
@@ -14,7 +18,10 @@ const postAddCategory = async (req, res, next) => {
 const postEditCategory = (req, res, next) => {
   const categoryId = req.body.id;
   const updatedName = req.body.name;
-
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.status(422).json(errors.array());
+  }
   Category.findByPk(categoryId)
     .then((category) => {
       category.name = updatedName;

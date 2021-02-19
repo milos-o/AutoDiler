@@ -9,8 +9,6 @@ const Car = sequelize.define('car', {
     allowNull: false,
     primaryKey: true
   },
-  producer: Sequelize.STRING,
-  model: Sequelize.STRING,
   carbody: Sequelize.STRING,
   image: Sequelize.STRING,
   fuel: Sequelize.STRING,
