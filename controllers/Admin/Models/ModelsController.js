@@ -28,7 +28,7 @@ const postAddModel = async (req, res, next) => {
   }
 };
 
-const postEditModel = (req, res, next) => {
+const postEditModel = async (req, res, next) => {
   const modelId = req.body.id;
   const updatedName = req.body.name;
 
@@ -40,6 +40,7 @@ const postEditModel = (req, res, next) => {
   try {
     const model = await Model.findByPk(modelId);
       model.name = updatedName;
+      model.save();
       res.status(200).json(model);
   } catch (err) {
     if (!err.statusCode) {

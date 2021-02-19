@@ -34,6 +34,7 @@ const postEditCategory = async (req, res, next) => {
   try {
     const category = await Category.findByPk(categoryId);
     category.name = updatedName;
+    category.save();
     return res.status(200).json(category);
   } catch (err) {
     if (!err.statusCode) {

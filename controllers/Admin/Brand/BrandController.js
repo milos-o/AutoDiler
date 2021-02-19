@@ -32,7 +32,8 @@ const postEditBrand = async (req, res, next) => {
   try {
     const brand = await Brand.findByPk(brandId);
     brand.name = updatedName;
-    return res.status(200).json(result);
+    brand.save();
+    return res.status(200).json(brand);
   } catch (err) {
     if (!err.statusCode) {
       err.statusCode = 500;

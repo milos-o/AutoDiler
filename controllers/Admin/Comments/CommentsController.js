@@ -36,7 +36,8 @@ const postEditComment = async (req, res, next) => {
   try {
     const comment = await Comment.findByPk(commentId);
     comment.text = updatedText;
-    return res.status(200).json(Comment);
+    comment.save();
+    return res.status(200).json(comment);
   } catch (err) {
     if (!err.statusCode) {
       err.statusCode = 500;
