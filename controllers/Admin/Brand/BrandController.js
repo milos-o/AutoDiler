@@ -1,72 +1,90 @@
 const Brand = require("../../../models/Brand");
 const Model = require("../../../models/Model");
-const { validationResult } = require('express-validator/check');
+const { validationResult } = require("express-validator/check");
 
-const postAddBrand = (req, res, next) => {
+const postAddBrand = async (req, res, next) => {
   const name = req.body.name;
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
     return res.status(422).json(errors.array());
   }
-  
-    Brand.create({
+
+  try {
+    const brand = await Brand.create({
       name: name,
-    })
-    .then((result) => {
-      res.status(200).json(result);
-    })
-    .catch((err) => {
-      console.log(err);
     });
+    return res.status(200).json(brand);
+  } catch (err) {
+    if (!err.statusCode) {
+      err.statusCode = 500;
+    }
+    next(err);
+  }
 };
 
-const postEditBrand = (req, res, next) => {
+const postEditBrand = async (req, res, next) => {
   const brandId = req.body.id;
   const updatedName = req.body.name;
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
     return res.status(422).json(errors.array());
   }
-  Brand.findByPk(brandId)
-    .then((brand) => {
-      brand.name = updatedName;
-      return brand.save();
-    })
-    .then((result) => {
-      res.status(200).json(result);
-    })
-    .catch((err) => console.log(err));
+  try {
+    const brand = await Brand.findByPk(brandId);
+    brand.name = updatedName;
+    return res.status(200).json(result);
+  } catch (err) {
+    if (!err.statusCode) {
+      err.statusCode = 500;
+    }
+    next(err);
+  }
 };
 
-const getAllBrands = (req, res, next) => {
-  Brand.findAll()
-    .then((brands) => {
-      res.status(200).json(brands);
-    })
-    .catch((err) => console.log(err));
+const getAllBrands = async (req, res, next) => {
+  try {
+    const brands = await Brand.findAll();
+    return res.status(200).json(brands);
+  } catch (err) {
+    if (!err.statusCode) {
+      err.statusCode = 500;
+    }
+    next(err);
+  }
 };
 
-const postDeleteBrand = (req, res, next) => {
+const postDeleteBrand = async (req, res, next) => {
   const brandId = req.body.id;
-  Brand.findByPk(brandId)
-    .then((brand) => {
-      return brand.destroy();
-    })
-    .then((result) => {
-      res.status(200).send("Deleted!");
-    })
-    .catch((err) => console.log(err));
+
+  try {
+    const brand = await Brand.findByPk(brandId);
+    brand.destroy();
+    return res.status(200).send("Deleted!");
+  } catch (err) {
+    if (!err.statusCode) {
+      err.statusCode = 500;
+    }
+    next(err);
+  }
 };
 
 const findOneBrand = async (req, res, next) => {
   const brandId = req.body.id;
-  const result = await Brand.findOne({
-    where: {
-      id: brandId,
-    },
-    include: Model,
-  });
-  return res.status(200).json(result);
+
+  try {
+    const result = await Brand.findOne({
+      where: {
+        id: brandId,
+      },
+      include: Model,
+    });
+    return res.status(200).json(result);
+  } catch (err) {
+    if (!err.statusCode) {
+      err.statusCode = 500;
+    }
+    next(err);
+  }
 };
 
 module.exports = {
@@ -74,5 +92,5 @@ module.exports = {
   postEditBrand,
   getAllBrands,
   postDeleteBrand,
-  findOneBrand
+  findOneBrand,
 };
