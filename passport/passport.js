@@ -7,7 +7,7 @@ module.exports = function(passport){
         new LocalStrategy({usernameField: 'email'},(email,password,done)=>{
             //match user
             
-            User.findOne({email:email})
+            User.findOne({where:{email:email}})
             .then((user)=>{
                 console.log(user);
                 if(!user){
@@ -30,9 +30,12 @@ module.exports = function(passport){
     passport.serializeUser(function(user,done) {
         done(null,user.id);
     })
-    passport.deserializeUser(function(id,done){
-        User.findById(id,function(err,user){
-            done(err,user);
-        })
-    })
+    passport.deserializeUser(function(id, done) {
+        User.findOne({where:{id: id}}).then(function(user){
+            done(null, user);
+        }).catch(function(e){
+            done(e, false);
+        });
+    });
+
 }

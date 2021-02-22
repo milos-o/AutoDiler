@@ -4,7 +4,10 @@ const cookieSession = require("cookie-session");
 const sequelize = require("./util/database");
 const multer = require("multer");
 const path = require("path");
+require('./passport/passport.js')(passport)
 const { json, urlencoded } = require("body-parser");
+const flash = require('connect-flash');
+
 
 const app = express();
 
@@ -33,10 +36,11 @@ app.use(
   })
 );
 
+app.use(flash());
 //Configure Passport
 app.use(passport.initialize());
 app.use(passport.session());
-
+/*
 app.use((req, res, next) => {
     User.findByPk(1)
       .then(user => {
@@ -45,6 +49,8 @@ app.use((req, res, next) => {
       })
       .catch(err => console.log(err));
   });
+  */
+ 
 const publicRoutes = require("./routes/public");
 const userRoutes = require("./routes/user");
 const adminRoutes = require("./routes/admin");
@@ -90,7 +96,7 @@ sequelize
   })
   .then((user) => {
     if (!user) {
-      return User.create({ username: "Max", email: "test@test.com" });
+      return User.create({ name: "Max", email: "test@test.com", password: "12345", location: "Podgorica" });
     }
     return user;
   })

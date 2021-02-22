@@ -5,6 +5,9 @@ const Model = require("../../../models/Model");
 const User = require("../../../models/User");
 const Comment = require("../../../models/Comment");
 const Images = require("../../../models/Images");
+const { mode } = require("crypto-js");
+const { Op } = require("sequelize");
+const { validationResult } = require('express-validator/check');
 
 const postAddAdvertisment = async (req, res, next) => {
   const name = req.body.name;
@@ -12,16 +15,15 @@ const postAddAdvertisment = async (req, res, next) => {
   const carbody = req.body.carbody;
   const year = req.body.year;
   const mielage = req.body.mielage;
-  const brandId = req.body.brandId;
-  const categoryId = req.body.categoryId;
+  const cubic = req.body.cubic;
+  const modelId = req.body.modelId;
+
   const images = req.files;
-  console.log(images);
-  images.forEach((image) => {
-    Images.create({
-      path: image.path,
-      advertismentId: 1,
-    });
-  });
+
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.status(422).json(errors.array());
+  }
 
   try {
     const result = await Advertisment.create({
@@ -30,9 +32,18 @@ const postAddAdvertisment = async (req, res, next) => {
       carbody: carbody,
       year: year,
       mielage: mielage,
-      brandId: brandId,
-      categoryId: categoryId,
+      cubic: cubic,
+      modelId: modelId,
     });
+
+    if (images) {
+      images.forEach((image) => {
+        Images.create({
+          path: image.path,
+          advertismentId: result.id,
+        });
+      });
+    }
 
     return res.status(200).json(result);
   } catch (err) {
@@ -50,12 +61,21 @@ const postEditAdvertisment = (req, res, next) => {
   const updatedCarbody = req.body.carbody;
   const updatedYear = req.body.year;
   const updatedMielage = req.body.mielage;
-  const updatedBrand = req.body.brandId;
-  const updatedCategory = req.body.categoryId;
+  const updatedModel = req.body.modelId;
+
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.status(422).json(errors.array());
+  }
 
   Advertisment.findByPk(adverismentId)
     .then((advertisment) => {
       advertisment.name = updatedName;
+      advertisment.fuel = updatedFuel;
+      advertisment.carbody = updatedCarbody;
+      advertisment.year = updatedYear;
+      advertisment.mielage = updatedMielage;
+      advertisment.modelId = updatedModel;
       return advertisment.save();
     })
     .then((result) => {
@@ -107,14 +127,26 @@ const postDeleteAdvertisment = async (req, res, next) => {
 };
 
 const findOneAdvertisment = async (req, res, next) => {
-  const advertismentId = req.body.id;
+  const advertismentId = req.params.id;
 
   try {
     const result = await Advertisment.findOne({
       where: {
         id: advertismentId,
       },
-      include: Model,
+      include: [
+        {
+          model: Model,
+          include: [
+            {
+              model: Brand,
+            },
+            {
+              model: Category,
+            },
+          ],
+        },
+      ],
     });
     return res.status(200).json(result);
   } catch (err) {
@@ -143,6 +175,51 @@ const findAllCommentsForAdvertisment = async (req, res, next) => {
   }
 };
 
+const searchForAdvertisment = async (req, res, next) => {
+  const query = req.body.query;
+
+  try {
+    const result = await Advertisment.findAll({
+      where: {
+        [Op.or]: [
+          {
+            id: {
+              [Op.like]: query,
+            },
+          },
+          {
+            name: {
+              [Op.like]: query,
+            },
+          },
+          {
+            mielage: {
+              [Op.like]: query,
+            },
+          },
+          {
+            fuel: {
+              [Op.like]: query,
+            },
+          },
+          {
+            cubic: {
+              [Op.like]: query,
+            },
+          },
+        ],
+      },
+    });
+
+    return res.status(200).json(result);
+  } catch (err) {
+    if (!err.statusCode) {
+      err.statusCode = 500;
+    }
+    next(err);
+  }
+};
+
 module.exports = {
   postAddAdvertisment,
   postEditAdvertisment,
@@ -150,4 +227,5 @@ module.exports = {
   postDeleteAdvertisment,
   findOneAdvertisment,
   findAllCommentsForAdvertisment,
+  searchForAdvertisment,
 };

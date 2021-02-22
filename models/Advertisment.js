@@ -9,14 +9,39 @@ const Advertisment = sequelize.define('advertisment', {
     allowNull: false,
     primaryKey: true
   },
-  name: Sequelize.STRING,
-  description: Sequelize.TEXT,
-  fuel: Sequelize.STRING,
-  mileage: Sequelize.INTEGER,
-  kw:Sequelize.INTEGER,
-  cubic: Sequelize.INTEGER,
-  year: Sequelize.INTEGER,
-  transmission:Sequelize.STRING
+  title: {
+    type: Sequelize.STRING,
+    allowNull: false
+  },
+  description:  {
+    type: Sequelize.TEXT,
+    allowNull: false
+  },
+  kw:  {
+    type: Sequelize.STRING,
+    allowNull: false
+  },
+  transmission: {
+    type: Sequelize.STRING,
+    allowNull: false
+  },
+  fuel: {
+    type: Sequelize.STRING,
+    allowNull: false
+  },
+  mileage: {
+    type: Sequelize.INTEGER,
+    allowNull: false
+  },
+  cubic: {
+    type: Sequelize.INTEGER,
+    allowNull: false
+  },
+  year: {
+    type: Sequelize.DATE,
+    allowNull: false
+  },
+  
 });
 
 

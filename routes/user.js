@@ -5,26 +5,13 @@ require("../passport/google-auth");
 const UserController = require("../controllers/User/UserController");
 const User = require("../models/User");
 const bcrypt = require("bcrypt");
+const { check, body } = require("express-validator/check");
 const { isAdmin, isAuth } = require("../middleware/auth");
 
 const router = express.Router();
 
-//Unprotected Routes
-router.get("/", (req, res) => {
-  res.send("<h1>Home</h1>");
-});
-
-router.get("/failed", (req, res) => {
-  res.send("<h1>Log in Failed :(</h1>");
-});
-
-// Middleware - Check user is Logged in
-const checkUserLoggedIn = (req, res, next) => {
-  req.user ? next() : res.sendStatus(401);
-};
-
 //Protected Route.
-router.get("/profile", checkUserLoggedIn, (req, res) => {
+router.get("/profile", (req, res) => {
   res.send(`<h1>${req.user.displayName}'s Profile Page</h1>`);
 });
 
@@ -45,16 +32,33 @@ router.get(
 //Logout
 router.get("/logout", UserController.logout);
 
-router.get("/logSucces",(req,res)=>{
-  res.status(200).send("Loged in succesfully!!");
-})
+router.get("/logSucces", UserController.loginSucceded);
 
 router.post("/login", UserController.login);
 
-router.post("/register", UserController.register);
+router.post(
+  "/register",
+  [
+    check("email")
+      .isEmail()
+      .withMessage("Please enter a valid email.")
+      .normalizeEmail(),
+    body(
+      "password",
+      "Please enter a password with only numbers and text and at least 5 characters."
+    )
+      .isLength({ min: 5 })
+      .isAlphanumeric()
+      .trim(),
+    body("name").isString(),
+    body("location").isString(),
+  ],
+  UserController.register
+);
 
 router.get("/my-advertisment", UserController.myAdvertisment);
 
+<<<<<<< HEAD
 router.post("/add-advertisment",UserController.addNewAdd);
 
 router.put("/edit-add/:addId",UserController.editAdd);
@@ -62,3 +66,10 @@ router.put("/edit-add/:addId",UserController.editAdd);
 router.delete("/delete-add/:addId")
 
 module.exports = router;
+=======
+router.get("/confirmation/:code", UserController.verifyEmail);
+
+router.get("/reset/:token", UserController.getResetPassword);
+
+module.exports = router;
+>>>>>>> master

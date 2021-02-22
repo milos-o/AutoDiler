@@ -1,55 +1,89 @@
+const Brand = require("../../../models/Brand");
+const Category = require("../../../models/Category");
 const Model = require("../../../models/Model");
+const { validationResult } = require('express-validator/check');
 
-const postAddModel = (req, res, next) => {
+const postAddModel = async (req, res, next) => {
   const name = req.body.name;
-  const brandId = req.body.id;
+  const brandId = req.body.brandId;
+  const categoryId = req.body.categoryId;
 
-  
-    Model.create({
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.status(422).json(errors.array());
+  }
+
+  try {
+   const model = await Model.create({
       name: name,
-      brandId: brandId
+      brandId: brandId,
+      categoryId: categoryId
     })
-    .then((result) => {
-      res.status(200).json(result);
-    })
-    .catch((err) => {
-      console.log(err);
-    });
+    return  res.status(200).json(model);
+  } catch (err) {
+    if (!err.statusCode) {
+      err.statusCode = 500;
+    }
+    next(err);
+  }
 };
 
-const postEditModel = (req, res, next) => {
+const postEditModel = async (req, res, next) => {
   const modelId = req.body.id;
   const updatedName = req.body.name;
 
-  Model.findByPk(modelId)
-    .then((model) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.status(422).json(errors.array());
+  }
+
+  try {
+    const model = await Model.findByPk(modelId);
       model.name = updatedName;
-      return model.save();
-    })
-    .then((result) => {
-      res.status(200).json(result);
-    })
-    .catch((err) => console.log(err));
+      model.save();
+      res.status(200).json(model);
+  } catch (err) {
+    if (!err.statusCode) {
+      err.statusCode = 500;
+    }
+    next(err);
+  }
 };
 
-const getAllModels = (req, res, next) => {
-  Model.findAll()
-    .then((models) => {
-      res.status(200).json(models);
+const getAllModels = async (req, res, next) => {
+
+  try {
+   const models = await Model.findAll({
+      include: [
+        {
+          model: Brand
+        },
+        {
+          model: Category
+        }
+      ]
     })
-    .catch((err) => console.log(err));
+     return res.status(200).json(models);
+  } catch (err) {
+    if (!err.statusCode) {
+      err.statusCode = 500;
+    }
+    next(err);
+  }
 };
 
-const postDeleteModel = (req, res, next) => {
+const postDeleteModel = async (req, res, next) => {
   const modelId = req.body.id;
-  Model.findByPk(modelId)
-    .then((model) => {
-      return model.destroy();
-    })
-    .then((result) => {
-      res.status(200).send("Deleted!");
-    })
-    .catch((err) => console.log(err));
+  try {
+    const model = await Model.findByPk(modelId);
+    model.destroy();
+    return res.status(200).send("Deleted!");
+  } catch (err) {
+    if (!err.statusCode) {
+      err.statusCode = 500;
+    }
+    next(err);
+  }
 };
 
 module.exports = {

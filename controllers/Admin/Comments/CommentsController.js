@@ -1,50 +1,76 @@
 const Comment = require("../../../models/Comment");
+const { validationResult } = require("express-validator/check");
 
 const postAddComment = async (req, res, next) => {
   const text = req.body.text;
   const advertismentId = req.body.advertismentId;
 
-  const result = await req.user.createComment({
-    text: text,
-    advertismentId: advertismentId,
-  });
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.status(422).json(errors.array());
+  }
 
-  return res.status(200).json(result);
+  try {
+    const result = await req.user.createComment({
+      text: text,
+      advertismentId: advertismentId,
+    });
+
+    return res.status(200).json(result);
+  } catch (err) {
+    if (!err.statusCode) {
+      err.statusCode = 500;
+    }
+    next(err);
+  }
 };
 
-const postEditComment = (req, res, next) => {
+const postEditComment = async (req, res, next) => {
   const commentId = req.body.id;
   const updatedText = req.body.text;
 
-  Comment.findByPk(commentId)
-    .then((comment) => {
-      comment.text = updatedText;
-      return comment.save();
-    })
-    .then((result) => {
-      res.status(200).json(result);
-    })
-    .catch((err) => console.log(err));
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.status(422).json(errors.array());
+  }
+  try {
+    const comment = await Comment.findByPk(commentId);
+    comment.text = updatedText;
+    comment.save();
+    return res.status(200).json(comment);
+  } catch (err) {
+    if (!err.statusCode) {
+      err.statusCode = 500;
+    }
+    next(err);
+  }
 };
 
-const getAllComments = (req, res, next) => {
-  Comment.findAll()
-    .then((comments) => {
-      res.status(200).json(comments);
-    })
-    .catch((err) => console.log(err));
+const getAllComments = async (req, res, next) => {
+  try {
+    const comments = await Comment.findAll();
+    return res.status(200).json(comments);
+  } catch (err) {
+    if (!err.statusCode) {
+      err.statusCode = 500;
+    }
+    next(err);
+  }
 };
 
-const postDeleteComment = (req, res, next) => {
+const postDeleteComment = async (req, res, next) => {
   const commentId = req.body.id;
-  Comment.findByPk(commentId)
-    .then((comment) => {
-      return comment.destroy();
-    })
-    .then((result) => {
-      res.status(200).send("Deleted!");
-    })
-    .catch((err) => console.log(err));
+
+  try {
+    const comment = await Comment.findByPk(commentId);
+    comment.destroy();
+    return res.status(200).send("Deleted!");
+  } catch (err) {
+    if (!err.statusCode) {
+      err.statusCode = 500;
+    }
+    next(err);
+  }
 };
 
 module.exports = {
