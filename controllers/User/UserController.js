@@ -212,12 +212,16 @@ async function addNewAdd(req,res,next){
   try {
     let userId=req.user.id;
     let add = await Advertisment.create({
-      name:req.body.name,
-      carbody:req.body.carbody,
+      title:req.body.title,
+      description:req.body.description,
       fuel:req.body.fuel,
-      mielage:req.body.mileage,
+      mileage:req.body.mileage,
+      kw:req.body.kw,
+      transmission:req.body.transmission,
+      year:req.body.year,
       userId: userId,
-      modelId:req.body.model
+      modelId:req.body.model,
+
     })
     res.status(203).json(add);
   } catch (error) {
@@ -228,19 +232,21 @@ async function addNewAdd(req,res,next){
   
 async function editAdd(req,res,next){
   let id = req.params.addId;
-  const {name,carbody,fuel,mileage,cubicCapacity,year,model}=req.body;
+  const {title,description,fuel,mileage,kw,cubicCapacity,year,model,transmission}=req.body;
 
   if(!id) next(new Error("Missing params! No id of add to be edited!!"));
   try {
     let add = await Advertisment.findByPk(id);
     if(add.userId!=req.user.id) next(new Error("You dont have premissions for this action"))
-    if(name) add["name"]=name;
-    if(carbody) add["carbody"]=carbody;
+    if(title) add["title"]=title;
+    if(transmission) add["transmission"]=transmission;
     if(fuel) add["fuel"]=fuel;
-    if(mileage) add["mielage"]=mileage;
+    if(mileage) add["mileage"]=mileage;
+    if(kw) add["kw"]=kw;
     if(cubicCapacity) add["cubic"]=cubicCapacity;
     if(year) add["year"]=year;
     if(model) add["model"]=model;
+    if(description) add["description"]=description;
 
     await add.save();
     await add.reload();
@@ -268,7 +274,7 @@ async function deleteAdd(req,res,next){
     next(error);
   }
 }
-
+//
 
 module.exports = {
   logout,
