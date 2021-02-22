@@ -18,6 +18,7 @@ const Comment = require("./models/Comment");
 const Category = require("./models/Category");
 const Brand = require("./models/Brand");
 const Advertisment = require("./models/Advertisment");
+const Contact = require("./models/Contact");
 
 
 const PORT = process.env.PORT || 3000;

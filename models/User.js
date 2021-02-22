@@ -13,7 +13,7 @@ const User = sequelize.define('user', {
   username: Sequelize.STRING,
   email: Sequelize.STRING,
   password: Sequelize.STRING,
-  phone:sequelize.STRING,
+  phone:Sequelize.STRING,
   isAdmin: Sequelize.BOOLEAN
 });
 
