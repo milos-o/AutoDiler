@@ -58,18 +58,17 @@ router.post(
 
 router.get("/my-advertisment", UserController.myAdvertisment);
 
-<<<<<<< HEAD
-router.post("/add-advertisment",UserController.addNewAdd);
+router.post("/advertisment",UserController.addNewAdd);
 
-router.put("/edit-add/:addId",UserController.editAdd);
+router.put("/advertisment/:addId",UserController.editAdd);
 
-router.delete("/delete-add/:addId")
+router.delete("/advertisment/:addId")
+
 
 module.exports = router;
-=======
 router.get("/confirmation/:code", UserController.verifyEmail);
 
 router.get("/reset/:token", UserController.getResetPassword);
 
 module.exports = router;
->>>>>>> master
+

@@ -8,8 +8,8 @@ router.get("/add/:id",publicController.getAddByID);
 router.get("/adds",publicController.getAllAdds);
 //pretraga
 router.get("/adds/search",publicController.getFilteredAdds);
-//oglasi odredjenog korisnika
-router.get("/adds/:username",publicController.getAddsByUser);
+//oglasi odredjenog korisnika 
+router.get("/adds/:userId",publicController.getAddsByUser);
 //komentari za konkretni oglas
 router.get("/comments/:addId",publicController.getAddComments);
 

@@ -80,11 +80,11 @@ async function getAllAdds(req,res,next){
     }
 }
 async function getAddsByUser(req,res,next){
-    let username=req.params.username;
+    let userId=req.params.userId;
     try {
         let adds = await Advertisment.findAll({
             where:{
-                userId: username
+                userId: userId
             },
             attributes:{exclude:["modelId","userId"]},
             include:[
@@ -236,5 +236,6 @@ module.exports = {
     getAllAdds,
     getAddsByUser,
     getFilteredAdds,
-    getAddComments
+    getAddComments,
+
 }

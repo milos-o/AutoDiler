@@ -43,10 +43,10 @@ const login = (req, res, next) => {
   })(req, res, next);
 };
 
-<<<<<<< HEAD
+
 //
 
-=======
+
 const loginSucceded = (req, res, next) => {
  // return res.status(200).send("Great, you are loged in");
   return res.status(200).json(req.user);
@@ -74,7 +74,7 @@ const verifyEmail = async (req, res, next) => {
     next(err);
   }
 };
->>>>>>> master
+
 
 const myAdvertisment = async (req, res, next) => {
   try {
@@ -93,6 +93,7 @@ const myAdvertisment = async (req, res, next) => {
   }
 };
 
+
 const getResetPassword = async (req, res, next) => {
   const email = req.body.email;
   crypto.randomBytes(32, (err, buffer) => {
@@ -103,30 +104,6 @@ const getResetPassword = async (req, res, next) => {
 
     const token = buffer.toString("hex");
   });
-<<<<<<< HEAD
-  return res.status(200).json(result);
-}
-
-//need to be updated
-async function addNewAdd(req,res,next){
-  try {
-    let userId=req.user.id;
-    let add = await Advertisment.create({
-      name:req.body.name,
-      carbody:req.body.carbody,
-      fuel:req.body.fuel,
-      mielage:req.body.mileage,
-      userId: userId,
-      modelId:req.body.model
-    })
-    res.status(203).json(add);
-  } catch (error) {
-    if(!error.statusCode) error.statusCode=400;
-    next(error);
-  }
-}
-
-=======
 
   try {
     const user = await User.findOne({ where: { email: email } });
@@ -147,6 +124,27 @@ async function addNewAdd(req,res,next){
     });
 
     return res.status(200);
+  } catch (err) {
+    if (!err.statusCode) {
+      err.statusCode = 500;
+    }
+    next(err);
+  }
+};
+
+const getNewPassword = async (req, res, next) => {
+  const token = req.params.token;
+
+  try {
+    const user = await User.findOne({
+      where: {
+        resetToken: token,
+        resetTokenExpiration: {
+          [Op.gt]: Date.now(),
+        },
+      },
+    });
+    return res.status(200).json(user);
   } catch (err) {
     if (!err.statusCode) {
       err.statusCode = 500;
@@ -203,22 +201,31 @@ const postNewPassword = async (req, res, next) => {
     next(err);
   }
 };
->>>>>>> master
 
-/*
-const deleteAdvertisment = async (req, res, next) => {
-  const result = await User.findOne({
-    where: {
-      id: req.user.id,
-    },
-    include: Advertisment,
-  });
 
-  return res.status(200).json(result);
-}
-*/
-<<<<<<< HEAD
+
+
 ``
+
+  //need to be updated
+async function addNewAdd(req,res,next){
+  try {
+    let userId=req.user.id;
+    let add = await Advertisment.create({
+      name:req.body.name,
+      carbody:req.body.carbody,
+      fuel:req.body.fuel,
+      mielage:req.body.mileage,
+      userId: userId,
+      modelId:req.body.model
+    })
+    res.status(203).json(add);
+  } catch (error) {
+    if(!error.statusCode) error.statusCode=400;
+    next(error);
+  }
+}
+  
 async function editAdd(req,res,next){
   let id = req.params.addId;
   const {name,carbody,fuel,mileage,cubicCapacity,year,model}=req.body;
@@ -261,23 +268,19 @@ async function deleteAdd(req,res,next){
     next(error);
   }
 }
-=======
->>>>>>> master
+
 
 module.exports = {
   logout,
   register,
   login,
   myAdvertisment,
-<<<<<<< HEAD
   addNewAdd,
   editAdd,
   deleteAdd,
-=======
   verifyEmail,
   getResetPassword,
   getNewPassword,
   postNewPassword,
   loginSucceded
->>>>>>> master
 };
