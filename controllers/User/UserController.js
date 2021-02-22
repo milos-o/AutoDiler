@@ -153,26 +153,7 @@ const getNewPassword = async (req, res, next) => {
   }
 };
 
-const getNewPassword = async (req, res, next) => {
-  const token = req.params.token;
 
-  try {
-    const user = await User.findOne({
-      where: {
-        resetToken: token,
-        resetTokenExpiration: {
-          [Op.gt]: Date.now(),
-        },
-      },
-    });
-    return res.status(200).json(user);
-  } catch (err) {
-    if (!err.statusCode) {
-      err.statusCode = 500;
-    }
-    next(err);
-  }
-};
 
 const postNewPassword = async (req, res, next) => {
   const newPassword = req.body.password;
