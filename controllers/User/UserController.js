@@ -1,5 +1,6 @@
 const Advertisment = require("../../models/Advertisment");
 const User = require("../../models/User");
+const Comment = require("../../models/Comment");
 const bcrypt = require("bcrypt");
 var jwt = require("jsonwebtoken");
 const passport = require("passport");
@@ -196,6 +197,7 @@ async function addNewAdd(req,res,next){
       title:req.body.title,
       description:req.body.description,
       fuel:req.body.fuel,
+      cubic:req.body.cubicCapacity,
       mileage:req.body.mileage,
       kw:req.body.kw,
       transmission:req.body.transmission,
@@ -204,7 +206,7 @@ async function addNewAdd(req,res,next){
       modelId:req.body.model,
 
     })
-    res.status(203).json(add);
+    res.status(201).json(add);
   } catch (error) {
     if(!error.statusCode) error.statusCode=400;
     next(error);
@@ -218,7 +220,13 @@ async function editAdd(req,res,next){
   if(!id) next(new Error("Missing params! No id of add to be edited!!"));
   try {
     let add = await Advertisment.findByPk(id);
-    if(add.userId!=req.user.id) next(new Error("You dont have premissions for this action"))
+
+    if(add.userId!=req.user.id){
+      let err = new Error("You dont have permissions for this action");
+      err.statusCode = 401; 
+      next(err);
+    }
+
     if(title) add["title"]=title;
     if(transmission) add["transmission"]=transmission;
     if(fuel) add["fuel"]=fuel;
@@ -245,9 +253,16 @@ async function deleteAdd(req,res,next){
   let id = req.params.addId;
   try {
     let add = await Advertisment.findByPk(id);
-    
+
+    if(add.userId!=req.user.id){
+      let err = new Error("You dont have permissions for this action");
+      err.statusCode = 401; 
+      next(err);
+    }
     add.destroy();
     res.status(200).json(`Add with id:${id} deleted`);
+    
+
   } catch (error) {
       if(!error.statusCode){
         error.statusCode=400;
@@ -255,7 +270,40 @@ async function deleteAdd(req,res,next){
     next(error);
   }
 }
-//
+//comments
+
+async function addComment(req,res,next){
+  try {
+    let advertismentId = req.params.addId;
+    let userId=req.user.id;
+    let comment = await Comment.create({
+      text: req.body.text,
+      userId: userId,
+      advertismentId:advertismentId
+    })
+    res.status(201).json(comment);
+  } catch (error) {
+    if(!error.statusCode) error.statusCode=400;
+    next(error);
+  }  
+}
+
+
+async function deleteComment(res,req,next){
+  let id = req.params.commentId;
+  try {
+    let comment = await Comment.findByPk(id);
+    
+    comment.destroy();
+    res.status(200).json(`Comment with id:${id} deleted`);
+  } catch (error) {
+      if(!error.statusCode){
+        error.statusCode=400;
+    }
+    next(error);
+  }
+}
+
 
 module.exports = {
   logout,
@@ -265,9 +313,11 @@ module.exports = {
   addNewAdd,
   editAdd,
   deleteAdd,
+  addComment,
+  deleteComment,
   verifyEmail,
   getResetPassword,
   getNewPassword,
   postNewPassword,
-  loginSucceded
+  loginSucceded,
 };

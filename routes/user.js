@@ -62,8 +62,11 @@ router.post("/advertisment",UserController.addNewAdd);
 
 router.put("/advertisment/:addId",UserController.editAdd);
 
-router.delete("/advertisment/:addId")
+router.delete("/advertisment/:addId",UserController.deleteAdd);
 
+router.post("/comment/:addId",UserController.addComment);
+
+router.delete("/comment/:commentId",UserController.deleteComment);
 
 module.exports = router;
 router.get("/confirmation/:code", UserController.verifyEmail);

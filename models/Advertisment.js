@@ -14,7 +14,7 @@ const Advertisment = sequelize.define('advertisment', {
     allowNull: false
   },
   description:  {
-    type: Sequelize.TEXT
+    type: Sequelize.TEXT,
   },
   kw:  {
     type: Sequelize.STRING,

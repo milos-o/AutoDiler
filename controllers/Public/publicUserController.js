@@ -26,10 +26,14 @@ async function getAddByID(req,res,next){
             {
                 model:User,
                 required:true,
-                attributes:["id","username","email"],
+                attributes:["id","name","email"],
             },],
         })
-        console.log(add);
+        if(!add){
+            let err = new Error("Add doesnt exist");
+            err.statusCode=404;
+            next(err);
+        }
         res.status(200).json(add);
     } catch (error) {
         if(!error.statusCode){
@@ -59,7 +63,7 @@ async function getAllAdds(req,res,next){
                 {
                     model:User,
                     required:true,
-                    attributes:["id","username","email"]
+                    attributes:["id","name","email"]
                     
                 }
             ],
@@ -143,6 +147,39 @@ async function getFilteredAdds(req,res,next){
             [Op.lte]:req.query.maxCC
          }
     }
+
+    if(req.query.minKw && req.query.maxKw){
+        where1['kw']={
+            [Op.between]:[req.query.minKw,req.query.maxKw]
+        }
+    }else if(req.query.minCC){
+        where1['kw']={
+            [Op.gte]:req.query.minKw
+         }
+    }else if(req.query.maxCC){
+        where1['kw']={
+            [Op.lte]:req.query.maxKw
+         }
+    }
+
+    if(req.query.minMileage && req.query.maxMileage){
+        where1['mileage']={
+            [Op.between]:[req.query.minMileage,req.query.maxMileage]
+        }
+    }else if(req.query.minMileage){
+        where1['mileage']={
+            [Op.gte]:req.query.minMileage
+         }
+    }else if(req.query.maxMileage){
+        where1['mileage']={
+            [Op.lte]:req.query.maxMileage
+         }
+    }
+
+    if(req.query.transsmision){
+        where1['transsmision']=req.query.transsmision
+    }
+
     
     let pageNumber = req.query.page;
     if(!pageNumber) pageNumber=1;
@@ -176,14 +213,14 @@ async function getFilteredAdds(req,res,next){
                 {
                     model:User,
                     required:true,
-                    attributes:["id","username","email"],
+                    attributes:["id","name","email"],
                     
                 }
             ],
             
         }
         
-        let totalAdds = await Advertisment.count();  
+        let totalAdds = await Advertisment.count(criteria);  
         
         //ading limits
         criteria.limit=20;
@@ -212,16 +249,32 @@ async function getFilteredAdds(req,res,next){
 async function getAddComments(req,res,next){
     let id = req.params.addId;
     try {
-        let comments = await Comment.findAll({
+        let criteria={
             where:{
                 advertismentId:id,
             },
             attributes:{exclude:["advertismentId","userId"]},
             include:{
                 model:User,
+                required:true,
+                attributes:["id","name","email"],
             }
-        });
-        res.status(200).json(comments);
+        };
+        let totalComments = await Comment.count(criteria);
+        
+        let pageNumber = req.query.page;
+        if(!pageNumber) pageNumber=1;
+        
+        criteria.limit=20;
+        criteria.order=[['createdAt','DESC']];
+        criteria.offset=((pageNumber-1)*20);
+        let comments = await Comment.findAll(criteria);
+        
+        let result = {
+            comments: comments,
+            total: totalComments
+        };
+        res.status(200).json(result);
     } catch (error) {
         if(!error.statusCode){
             error.statusCode=400;

@@ -10,13 +10,16 @@ const { Op } = require("sequelize");
 const { validationResult } = require('express-validator/check');
 
 const postAddAdvertisment = async (req, res, next) => {
-  const name = req.body.name;
+  const title = req.body.title;
   const fuel = req.body.fuel;
-  const carbody = req.body.carbody;
+  const description = req.body.description;
   const year = req.body.year;
-  const mielage = req.body.mielage;
+  const mileage = req.body.mileage;
   const cubic = req.body.cubic;
+  const kw = req.body.kw;
+  const transmission = req.body.transmission;
   const modelId = req.body.modelId;
+  const categoryId = req.body.categoryId;
 
   const images = req.files;
 
@@ -28,12 +31,16 @@ const postAddAdvertisment = async (req, res, next) => {
   try {
     const result = await Advertisment.create({
       userId: req.user.id,
+      title:title,
+      transmission:transmission,
       fuel: fuel,
-      carbody: carbody,
+      description:description,
       year: year,
-      mielage: mielage,
+      mileage: mileage,
       cubic: cubic,
+      kw: kw,
       modelId: modelId,
+      categoryId: categoryId,
     });
 
     if (images) {
@@ -56,13 +63,15 @@ const postAddAdvertisment = async (req, res, next) => {
 
 const postEditAdvertisment = (req, res, next) => {
   const adverismentId = req.body.id;
-  const updatedName = req.body.name;
+  const updatedTitle = req.body.title;
   const updatedFuel = req.body.fuel;
-  const updatedCarbody = req.body.carbody;
+  const updatedDescription = req.body.description;
+  const updatedKw = req.body.kw,
+  const updatedTransmision = req.body.transmission,
   const updatedYear = req.body.year;
-  const updatedMielage = req.body.mielage;
+  const updatedMileage = req.body.mileage;
   const updatedModel = req.body.modelId;
-
+  const updatedCategory = req.body.categoryId
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
     return res.status(422).json(errors.array());
@@ -70,12 +79,16 @@ const postEditAdvertisment = (req, res, next) => {
 
   Advertisment.findByPk(adverismentId)
     .then((advertisment) => {
-      advertisment.name = updatedName;
+      advertisment.title = updatedTitle;
+      advertisment.transmission = updatedTransmision;
+      advertisment.kw=updatedKw;
       advertisment.fuel = updatedFuel;
-      advertisment.carbody = updatedCarbody;
+      advertisment.description = updatedDescription;
       advertisment.year = updatedYear;
-      advertisment.mielage = updatedMielage;
+      advertisment.mileage = updatedMileage;
+      advertisment.categoryId = updatedCategory;
       advertisment.modelId = updatedModel;
+
       return advertisment.save();
     })
     .then((result) => {
@@ -93,8 +106,13 @@ const getAllAdvertisment = async (req, res, next) => {
           required: true,
         },
         {
-          model: Brand,
+          model: Model,
           required: true,
+          include:{
+            model:Brand,
+            required:true,
+          }
+
         },
         {
           model: Category,
@@ -193,7 +211,7 @@ const searchForAdvertisment = async (req, res, next) => {
             },
           },
           {
-            mielage: {
+            mileage: {
               [Op.like]: query,
             },
           },

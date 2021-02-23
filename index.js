@@ -40,7 +40,7 @@ app.use(flash());
 //Configure Passport
 app.use(passport.initialize());
 app.use(passport.session());
-/*
+
 app.use((req, res, next) => {
     User.findByPk(1)
       .then(user => {
@@ -49,7 +49,7 @@ app.use((req, res, next) => {
       })
       .catch(err => console.log(err));
   });
-  */
+
  
 const publicRoutes = require("./routes/public");
 const userRoutes = require("./routes/user");
