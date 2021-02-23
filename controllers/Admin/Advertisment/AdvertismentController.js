@@ -66,8 +66,8 @@ const postEditAdvertisment = (req, res, next) => {
   const updatedTitle = req.body.title;
   const updatedFuel = req.body.fuel;
   const updatedDescription = req.body.description;
-  const updatedKw = req.body.kw,
-  const updatedTransmision = req.body.transmission,
+  const updatedKw = req.body.kw;
+  const updatedTransmision = req.body.transmission;
   const updatedYear = req.body.year;
   const updatedMileage = req.body.mileage;
   const updatedModel = req.body.modelId;

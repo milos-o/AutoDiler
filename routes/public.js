@@ -12,6 +12,8 @@ router.get("/adds/search",publicController.getFilteredAdds);
 router.get("/adds/:userId",publicController.getAddsByUser);
 //komentari za konkretni oglas
 router.get("/comments/:addId",publicController.getAddComments);
+//postavljanje pitanja
+router.post("/contact",publicController.postContactForm);
 
 
 

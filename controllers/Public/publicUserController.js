@@ -5,6 +5,7 @@ const User = require('../../models/User');
 const CarModel=require('../../models/Model');
 const Brand=require('../../models/Brand');
 const Comment=require('../../models/Comment');
+const Contact = require('../../models/Contact');
 const Op=Sequelize.Op;
 
 async function getAddByID(req,res,next){
@@ -283,6 +284,24 @@ async function getAddComments(req,res,next){
     }
 }
 
+async function postContactForm(req,res,next){
+    let id = req.params.addId;
+    try {
+        let question = await Contact.create({
+            name:req.body.name,
+            phone:req.body.phone,
+            email:req.body.email,
+            message:req.body.message,
+        });
+        res.status(200).json("Your question is sent!");
+    } catch (error) {
+        if(!error.statusCode){
+            error.statusCode=400;
+        }
+        next(error);
+    }
+
+}
 
 module.exports = {
     getAddByID,
@@ -290,6 +309,6 @@ module.exports = {
     getAddsByUser,
     getFilteredAdds,
     getAddComments,
-
+    postContactForm,
 
 }
