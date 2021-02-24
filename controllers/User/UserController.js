@@ -1,12 +1,14 @@
 const Advertisment = require("../../models/Advertisment");
 const User = require("../../models/User");
 const Comment = require("../../models/Comment");
+const CarModel = require("../../models/Model");
+const Brand = require("../../models/Brand");
 const bcrypt = require("bcrypt");
 var jwt = require("jsonwebtoken");
 const passport = require("passport");
 const nodemailer = require("../../util/sendingMail");
 const crypto = require("crypto");
-const { Op } = require("sequelize");
+const { Op, Model } = require("sequelize");
 const { validationResult } = require('express-validator/check');
 
 const logout = (req, res, next) => {
@@ -79,12 +81,20 @@ const verifyEmail = async (req, res, next) => {
 
 const myAdvertisment = async (req, res, next) => {
   try {
-    const result = await User.findOne({
+    const result = await Advertisment.findAll({
       where: {
-        id: req.user.id,
+        userId: req.user.id,
       },
-      include: Advertisment,
-    });
+      attributes:{exclude:["modelId","userId"]},
+      include:[{
+        model:CarModel,
+        attributes: ["id","name"],
+        include:{
+            model:Brand,
+            attributes: ["id","name"],
+        }
+    }],
+  });
     return res.status(200).json(result);
   } catch (err) {
     if (!err.statusCode) {
@@ -215,7 +225,7 @@ async function addNewAdd(req,res,next){
   
 async function editAdd(req,res,next){
   let id = req.params.addId;
-  const {title,description,fuel,mileage,kw,cubicCapacity,year,model,transmission}=req.body;
+  
 
   if(!id) next(new Error("Missing params! No id of add to be edited!!"));
   try {
@@ -227,15 +237,15 @@ async function editAdd(req,res,next){
       next(err);
     }
 
-    if(title) add["title"]=title;
-    if(transmission) add["transmission"]=transmission;
-    if(fuel) add["fuel"]=fuel;
-    if(mileage) add["mileage"]=mileage;
-    if(kw) add["kw"]=kw;
-    if(cubicCapacity) add["cubic"]=cubicCapacity;
-    if(year) add["year"]=year;
-    if(model) add["model"]=model;
-    if(description) add["description"]=description;
+    if(req.body.title) add["title"]=req.body.title;
+    if(req.body.transmission) add["transmission"]=req.body.transmission;
+    if(req.body.fuel) add["fuel"]=req.body.fuel;
+    if(req.body.mileage) add["mileage"]=req.body.mileage;
+    if(req.body.kw) add["kw"]=req.body.kw;
+    if(req.body.cubicCapacity) add["cubic"]=req.body.cubicCapacity;
+    if(req.body.year) add["year"]=req.body.year;
+    if(req.body.model) add["model"]=req.body.odel;
+    if(req.body.description) add["description"]=req.body.description;
 
     await add.save();
     await add.reload();

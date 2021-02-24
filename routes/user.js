@@ -56,22 +56,22 @@ router.post(
   UserController.register
 );
 
-router.get("/my-advertisment", UserController.myAdvertisment);
+router.get("/my-advertisment", isAuth,UserController.myAdvertisment);
 
-router.post("/advertisment",UserController.addNewAdd);
+router.post("/advertisment",isAuth,UserController.addNewAdd);
 
-router.put("/advertisment/:addId",UserController.editAdd);
+router.put("/advertisment/:addId",isAuth,UserController.editAdd);
 
-router.delete("/advertisment/:addId",UserController.deleteAdd);
+router.delete("/advertisment/:addId",isAuth,UserController.deleteAdd);
 
-router.post("/comment/:addId",UserController.addComment);
+router.post("/comment/:addId",isAuth,UserController.addComment);
 
-router.delete("/comment/:commentId",UserController.deleteComment);
+router.delete("/comment/:commentId",isAuth,UserController.deleteComment);
 
 module.exports = router;
-router.get("/confirmation/:code", UserController.verifyEmail);
+router.get("/confirmation/:code", isAuth,UserController.verifyEmail);
 
-router.get("/reset/:token", UserController.getResetPassword);
+router.get("/reset/:token", isAuth,UserController.getResetPassword);
 
 module.exports = router;
 
