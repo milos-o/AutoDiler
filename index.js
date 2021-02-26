@@ -4,12 +4,15 @@ const cookieSession = require("cookie-session");
 const sequelize = require("./util/database");
 const multer = require("multer");
 const path = require("path");
+const helmet = require("helmet");
 require('./passport/passport.js')(passport)
 const { json, urlencoded } = require("body-parser");
 const flash = require('connect-flash');
 
 
 const app = express();
+
+app.use(helmet());
 
 app.use(urlencoded({ extended: true }));
 app.use(json());
@@ -82,8 +85,8 @@ Images.belongsTo(Advertisment);
 
 
 sequelize
-  //.sync({ force: true })
-  .sync()
+  .sync({ force: true })
+  //.sync()
   .then((result) => {
     return User.findByPk(1);
     // console.log(result);
