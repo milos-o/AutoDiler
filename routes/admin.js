@@ -9,8 +9,9 @@ const adminComments = require("../controllers/Admin/Comments/CommentsController"
 const adminContact = require("../controllers/Admin/Contact/ContactController");
 
 const router = express.Router();
-var multer = require("multer");
-//var upload = multer({ dest: "images/" });
+
+const upload = require('../util/file-upload');
+const multipleUpload = upload.any();
 
 // routes for categorys begin
 router.post("/create-category",[
@@ -62,6 +63,7 @@ router.get("/all-models", adminModels.getAllModels);
 // routes for advertisments begin
 router.post(
   "/create-advertisment",
+  /*
   [
     body("name").isString().isLength({ min: 3 }).trim(),
     body("carbody").isString().trim(),
@@ -69,8 +71,8 @@ router.post(
     body("mielage").isNumeric(),
     body("cubic").isNumeric(),
     body("year").isDate(),
-  ],
-  //upload.any(),
+  ],*/
+   multipleUpload,
   adminAdvertisment.postAddAdvertisment
 );
 
@@ -120,19 +122,22 @@ router.get("/auth-user", (req, res, next) => {
   return res.status(200).json(req.user);
 });
 
-const upload = require('../util/file-upload');
 
-const singleUpload = upload.single('image');
 
 router.post('/image-upload', function(req, res) {
 
-  singleUpload(req, res, function(err) {
-    console.log(req.file)
+  multipleUpload(req, res, function(err) {
+    console.log(req.files)
+    const urlOfImages = [];
     if (err) {
       return res.status(422).send({errors: [{title: 'File Upload Error', detail: err.message}] });
     }
 
-    return res.json({'imageUrl': req.file.location});
+    req.files.forEach( image => {
+      urlOfImages.push(image.location);
+    })
+
+    return res.json(urlOfImages);
   });
 });
 

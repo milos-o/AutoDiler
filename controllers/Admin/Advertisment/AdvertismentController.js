@@ -46,7 +46,7 @@ const postAddAdvertisment = async (req, res, next) => {
     if (images) {
       images.forEach((image) => {
         Images.create({
-          path: image.path,
+          path: image.location,
           advertismentId: result.id,
         });
       });

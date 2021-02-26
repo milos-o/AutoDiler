@@ -44,7 +44,7 @@ app.use(flash());
 app.use(passport.initialize());
 app.use(passport.session());
 
-/*app.use((req, res, next) => {
+app.use((req, res, next) => {
     User.findByPk(1)
       .then(user => {
         req.user = user;
@@ -52,7 +52,7 @@ app.use(passport.session());
       })
       .catch(err => console.log(err));
   });
-*/
+
  
 const publicRoutes = require("./routes/public");
 const userRoutes = require("./routes/user");
@@ -91,8 +91,8 @@ Images.belongsTo(Advertisment);
 
 
 sequelize
-  .sync({ force: true })
-  //.sync()
+  //.sync({ force: true })
+  .sync()
   .then((result) => {
     return User.findByPk(1);
     // console.log(result);
