@@ -10,7 +10,7 @@ const adminContact = require("../controllers/Admin/Contact/ContactController");
 
 const router = express.Router();
 var multer = require("multer");
-var upload = multer({ dest: "images/" });
+//var upload = multer({ dest: "images/" });
 
 // routes for categorys begin
 router.post("/create-category",[
@@ -70,7 +70,7 @@ router.post(
     body("cubic").isNumeric(),
     body("year").isDate(),
   ],
-  upload.any(),
+  //upload.any(),
   adminAdvertisment.postAddAdvertisment
 );
 
@@ -118,6 +118,22 @@ router.delete("/message/:messageId",adminContact.deleteContactForm);
 router.get("/auth-user", (req, res, next) => {
   console.log(req.user);
   return res.status(200).json(req.user);
+});
+
+const upload = require('../util/file-upload');
+
+const singleUpload = upload.single('image');
+
+router.post('/image-upload', function(req, res) {
+
+  singleUpload(req, res, function(err) {
+    console.log(req.file)
+    if (err) {
+      return res.status(422).send({errors: [{title: 'File Upload Error', detail: err.message}] });
+    }
+
+    return res.json({'imageUrl': req.file.location});
+  });
 });
 
 module.exports = router;
