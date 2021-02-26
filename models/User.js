@@ -47,6 +47,7 @@ const User = sequelize.define('user', {
   resetTokenExpiration:{
      type: Sequelize.DATE
   } 
+  
 });
 
 module.exports = User;

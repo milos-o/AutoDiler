@@ -1,11 +1,14 @@
 const Advertisment = require("../../models/Advertisment");
 const User = require("../../models/User");
+const Comment = require("../../models/Comment");
+const CarModel = require("../../models/Model");
+const Brand = require("../../models/Brand");
 const bcrypt = require("bcrypt");
 var jwt = require("jsonwebtoken");
 const passport = require("passport");
 const nodemailer = require("../../util/sendingMail");
 const crypto = require("crypto");
-const { Op } = require("sequelize");
+const { Op, Model } = require("sequelize");
 const { validationResult } = require('express-validator/check');
 
 const logout = (req, res, next) => {
@@ -43,6 +46,10 @@ const login = (req, res, next) => {
   })(req, res, next);
 };
 
+
+//
+
+
 const loginSucceded = (req, res, next) => {
  // return res.status(200).send("Great, you are loged in");
   return res.status(200).json(req.user);
@@ -71,14 +78,23 @@ const verifyEmail = async (req, res, next) => {
   }
 };
 
+
 const myAdvertisment = async (req, res, next) => {
   try {
-    const result = await User.findOne({
+    const result = await Advertisment.findAll({
       where: {
-        id: req.user.id,
+        userId: req.user.id,
       },
-      include: Advertisment,
-    });
+      attributes:{exclude:["modelId","userId"]},
+      include:[{
+        model:CarModel,
+        attributes: ["id","name"],
+        include:{
+            model:Brand,
+            attributes: ["id","name"],
+        }
+    }],
+  });
     return res.status(200).json(result);
   } catch (err) {
     if (!err.statusCode) {
@@ -87,6 +103,7 @@ const myAdvertisment = async (req, res, next) => {
     next(err);
   }
 };
+
 
 const getResetPassword = async (req, res, next) => {
   const email = req.body.email;
@@ -147,6 +164,8 @@ const getNewPassword = async (req, res, next) => {
   }
 };
 
+
+
 const postNewPassword = async (req, res, next) => {
   const newPassword = req.body.password;
   const userId = req.body.userId;
@@ -175,27 +194,140 @@ const postNewPassword = async (req, res, next) => {
   }
 };
 
-/*
-const deleteAdvertisment = async (req, res, next) => {
-  const result = await User.findOne({
-    where: {
-      id: req.user.id,
-    },
-    include: Advertisment,
-  });
 
-  return res.status(200).json(result);
+
+
+``
+
+  //need to be updated
+async function addNewAdd(req,res,next){
+  try {
+    let userId=req.user.id;
+    let add = await Advertisment.create({
+      title:req.body.title,
+      description:req.body.description,
+      fuel:req.body.fuel,
+      cubic:req.body.cubicCapacity,
+      mileage:req.body.mileage,
+      kw:req.body.kw,
+      transmission:req.body.transmission,
+      year:req.body.year,
+      userId: userId,
+      modelId:req.body.model,
+
+    })
+    res.status(201).json(add);
+  } catch (error) {
+    if(!error.statusCode) error.statusCode=400;
+    next(error);
+  }
 }
-*/
+  
+async function editAdd(req,res,next){
+  let id = req.params.addId;
+  
+
+  if(!id) next(new Error("Missing params! No id of add to be edited!!"));
+  try {
+    let add = await Advertisment.findByPk(id);
+
+    if(add.userId!=req.user.id){
+      let err = new Error("You dont have permissions for this action");
+      err.statusCode = 401; 
+      next(err);
+    }
+
+    if(req.body.title) add["title"]=req.body.title;
+    if(req.body.transmission) add["transmission"]=req.body.transmission;
+    if(req.body.fuel) add["fuel"]=req.body.fuel;
+    if(req.body.mileage) add["mileage"]=req.body.mileage;
+    if(req.body.kw) add["kw"]=req.body.kw;
+    if(req.body.cubicCapacity) add["cubic"]=req.body.cubicCapacity;
+    if(req.body.year) add["year"]=req.body.year;
+    if(req.body.model) add["model"]=req.body.odel;
+    if(req.body.description) add["description"]=req.body.description;
+
+    await add.save();
+    await add.reload();
+    res.status(200).json(add);
+  } catch (error) {
+      if(!error.statusCode){
+        error.statusCode=400;
+    }
+    next(error);
+  }
+}
+
+
+async function deleteAdd(req,res,next){
+  let id = req.params.addId;
+  try {
+    let add = await Advertisment.findByPk(id);
+
+    if(add.userId!=req.user.id){
+      let err = new Error("You dont have permissions for this action");
+      err.statusCode = 401; 
+      next(err);
+    }
+    add.destroy();
+    res.status(200).json(`Add with id:${id} deleted`);
+    
+
+  } catch (error) {
+      if(!error.statusCode){
+        error.statusCode=400;
+    }
+    next(error);
+  }
+}
+//comments
+
+async function addComment(req,res,next){
+  try {
+    let advertismentId = req.params.addId;
+    let userId=req.user.id;
+    let comment = await Comment.create({
+      text: req.body.text,
+      userId: userId,
+      advertismentId:advertismentId
+    })
+    res.status(201).json(comment);
+  } catch (error) {
+    if(!error.statusCode) error.statusCode=400;
+    next(error);
+  }  
+}
+
+
+async function deleteComment(res,req,next){
+  let id = req.params.commentId;
+  try {
+    let comment = await Comment.findByPk(id);
+    
+    comment.destroy();
+    res.status(200).json(`Comment with id:${id} deleted`);
+  } catch (error) {
+      if(!error.statusCode){
+        error.statusCode=400;
+    }
+    next(error);
+  }
+}
+
 
 module.exports = {
   logout,
   register,
   login,
   myAdvertisment,
+  addNewAdd,
+  editAdd,
+  deleteAdd,
+  addComment,
+  deleteComment,
   verifyEmail,
   getResetPassword,
   getNewPassword,
   postNewPassword,
-  loginSucceded
+  loginSucceded,
 };

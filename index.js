@@ -24,6 +24,7 @@ const Comment = require("./models/Comment");
 const Category = require("./models/Category");
 const Brand = require("./models/Brand");
 const Advertisment = require("./models/Advertisment");
+const Contact = require("./models/Contact");
 
 
 const PORT = process.env.PORT || 3000;
@@ -42,8 +43,8 @@ app.use(flash());
 //Configure Passport
 app.use(passport.initialize());
 app.use(passport.session());
-/*
-app.use((req, res, next) => {
+
+/*app.use((req, res, next) => {
     User.findByPk(1)
       .then(user => {
         req.user = user;
@@ -52,11 +53,14 @@ app.use((req, res, next) => {
       .catch(err => console.log(err));
   });
 */
+ 
+const publicRoutes = require("./routes/public");
 const userRoutes = require("./routes/user");
 const adminRoutes = require("./routes/admin");
 
 app.use("/admin", adminRoutes);
 app.use(userRoutes);
+app.use(publicRoutes);
 
 // Error handling middleware
 app.use((error, req, res, next) => {
@@ -82,6 +86,8 @@ Model.hasMany(Advertisment);
 Advertisment.belongsTo(Model);
 Advertisment.hasMany(Images);
 Images.belongsTo(Advertisment);
+
+
 
 
 sequelize

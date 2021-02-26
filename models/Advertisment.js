@@ -9,8 +9,18 @@ const Advertisment = sequelize.define('advertisment', {
     allowNull: false,
     primaryKey: true
   },
-  name: Sequelize.STRING,
-  carbody: {
+  title: {
+    type: Sequelize.STRING,
+    allowNull: false
+  },
+  description:  {
+    type: Sequelize.TEXT,
+  },
+  kw:  {
+    type: Sequelize.STRING,
+    allowNull: false
+  },
+  transmission: {
     type: Sequelize.STRING,
     allowNull: false
   },
@@ -18,7 +28,7 @@ const Advertisment = sequelize.define('advertisment', {
     type: Sequelize.STRING,
     allowNull: false
   },
-  mielage: {
+  mileage: {
     type: Sequelize.INTEGER,
     allowNull: false
   },
@@ -30,6 +40,8 @@ const Advertisment = sequelize.define('advertisment', {
     type: Sequelize.DATE,
     allowNull: false
   },
+  
 });
+
 
 module.exports = Advertisment;

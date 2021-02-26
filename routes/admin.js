@@ -6,6 +6,7 @@ const adminBrands = require("../controllers/Admin/Brand/BrandController");
 const adminModels = require("../controllers/Admin/Models/ModelsController");
 const adminAdvertisment = require("../controllers/Admin/Advertisment/AdvertismentController");
 const adminComments = require("../controllers/Admin/Comments/CommentsController");
+const adminContact = require("../controllers/Admin/Contact/ContactController");
 
 const router = express.Router();
 var multer = require("multer");
@@ -108,6 +109,9 @@ router.post("/edit-comment",[
 router.delete("/delete-comment", adminComments.postDeleteComment);
 
 router.get("/all-comments", adminComments.getAllComments);
+
+router.get("/messages",adminContact.getContactForms);
+router.delete("/message/:messageId",adminContact.deleteContactForm);
 
 // routes for comments end
 
