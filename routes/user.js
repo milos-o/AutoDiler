@@ -1,7 +1,6 @@
 const express = require("express");
 const passport = require("passport");
 require("../passport/google-auth");
-//const { body, validationResult } = require("express-validator");
 const UserController = require("../controllers/User/UserController");
 const User = require("../models/User");
 const bcrypt = require("bcrypt");
@@ -68,10 +67,13 @@ router.post("/comment/:addId",isAuth,UserController.addComment);
 
 router.delete("/comment/:commentId",isAuth,UserController.deleteComment);
 
-module.exports = router;
 router.get("/confirmation/:code", isAuth,UserController.verifyEmail);
 
-router.get("/reset/:token", isAuth,UserController.getResetPassword);
+router.get("/reset/:token", UserController.getNewPassword);
+
+router.post("/get-password-reset",  UserController.getResetPassword);
+
+router.post("/new-password",  UserController.postNewPassword);
 
 module.exports = router;
 
