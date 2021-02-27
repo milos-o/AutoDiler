@@ -37,8 +37,8 @@ const register = async (req, res, next) => {
     location: location
   });
   console.log(token);
+  nodemailer.sendConfirmationEmail(name, email, verificationToken);
   return res.status(200).json(user);
- // nodemailer.sendConfirmationEmail(name, email, confirmed);
   } catch (err) {
     if (!err.statusCode) {
       err.statusCode = 500;
@@ -137,15 +137,7 @@ const getResetPassword = async (req, res, next) => {
     user.resetTokenExpiration = Date.now() + 3600000;
     user.save();
 
-    transporter.sendMail({
-      to: email,
-      from: process.env.USER,
-      subject: "Password reset",
-      html: `
-            <p>You requested a password reset</p>
-            <p>Click this <a href="http://localhost:3000/reset/${token}">link</a> to set a new password.</p>
-          `,
-    });
+    nodemailer.passwordResetLink(user.email, resetToken);
 
     return res.status(200).send("Reset link sent successfuly!");
   } catch (err) {
