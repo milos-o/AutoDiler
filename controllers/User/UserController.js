@@ -17,25 +17,35 @@ const logout = (req, res, next) => {
   res.status(200).send("You are logged out.");
 };
 
-const register = (req, res, next) => {
-  const { name, email, password, isAdmin, confirmed, location } = req.body;
+const register = async (req, res, next) => {
+  const { name, email, password, isAdmin, location } = req.body;
   const token = jwt.sign({ email: req.body.email }, process.env.SECRET);
-  
+ 
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
     return res.status(422).json(errors.array());
   }
 
-  const user = User.create({
+  try {
+    
+  const user = await User.create({
     name: name,
     email: email,
     password: bcrypt.hashSync(password, 8),
     isAdmin: isAdmin,
-    confirmed: token,
+    verificationToken: token,
     location: location
   });
   console.log(token);
-  nodemailer.sendConfirmationEmail(name, email, confirmed);
+  nodemailer.sendConfirmationEmail(name, email, verificationToken);
+  return res.status(200).json(user);
+  } catch (err) {
+    if (!err.statusCode) {
+      err.statusCode = 500;
+    }
+    next(err);
+  }
+
 };
 
 const login = (req, res, next) => {
@@ -112,13 +122,14 @@ const myAdvertisment = async (req, res, next) => {
 
 const getResetPassword = async (req, res, next) => {
   const email = req.body.email;
+  let token = 0;
   crypto.randomBytes(32, (err, buffer) => {
     if (err) {
       console.log(err);
       return res.redirect("/reset");
     }
 
-    const token = buffer.toString("hex");
+     token = buffer.toString("hex");
   });
 
   try {
@@ -127,19 +138,13 @@ const getResetPassword = async (req, res, next) => {
       return res.status(404).send("User with this email does not exist.");
     }
     user.resetToken = token;
+    console.log(token);
     user.resetTokenExpiration = Date.now() + 3600000;
+    user.save();
 
-    transporter.sendMail({
-      to: email,
-      from: process.env.USER,
-      subject: "Password reset",
-      html: `
-            <p>You requested a password reset</p>
-            <p>Click this <a href="http://localhost:3000/reset/${token}">link</a> to set a new password.</p>
-          `,
-    });
+    nodemailer.passwordResetLink(user.email, resetToken);
 
-    return res.status(200);
+    return res.status(200).send("Reset link sent successfuly!");
   } catch (err) {
     if (!err.statusCode) {
       err.statusCode = 500;
@@ -190,6 +195,7 @@ const postNewPassword = async (req, res, next) => {
     user.password = hashedPassword;
     user.resetToken = undefined;
     user.resetTokenExpiration = undefined;
+    user.save();
     return res.status(200).json(user);
   } catch (err) {
     if (!err.statusCode) {

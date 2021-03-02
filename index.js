@@ -4,12 +4,15 @@ const cookieSession = require("cookie-session");
 const sequelize = require("./util/database");
 const multer = require("multer");
 const path = require("path");
+const helmet = require("helmet");
 require('./passport/passport.js')(passport)
 const { json, urlencoded } = require("body-parser");
 const flash = require('connect-flash');
 
 
 const app = express();
+
+app.use(helmet());
 
 app.use(urlencoded({ extended: true }));
 app.use(json());
@@ -40,16 +43,6 @@ app.use(flash());
 //Configure Passport
 app.use(passport.initialize());
 app.use(passport.session());
-
-/*app.use((req, res, next) => {
-    User.findByPk(1)
-      .then(user => {
-        req.user = user;
-        next();
-      })
-      .catch(err => console.log(err));
-  });
-*/
  
 const publicRoutes = require("./routes/public");
 const userRoutes = require("./routes/user");
@@ -68,6 +61,9 @@ app.use((error, req, res, next) => {
   res.status(status).json({ message: message, data: data });
 });
 
+app.get("/", (req, res , next) => {
+  return res.send("Hello amazon!");
+})
 
 User.hasMany(Advertisment);
 Advertisment.belongsTo(User, { constraints: true, onDelete: 'CASCADE' });
@@ -85,29 +81,12 @@ Advertisment.hasMany(Images);
 Images.belongsTo(Advertisment);
 
 
-
-
 sequelize
   //.sync({ force: true })
   .sync()
-  .then((result)=>{
-    //console.log(result);
-    app.listen(PORT, () => console.log(`App listening on port ${PORT} 🚀🔥`));
-  })
-  /*.then((result) => {
-    return User.findByPk(1);
-    // console.log(result);
-  })
   .then((user) => {
-    if (!user) {
-      return User.create({ name: "Max", email: "test@test.com", password: "12345", location: "Podgorica" });
-    }
-    return user;
-  })
-  .then((user) => {
-    console.log(user);
     app.listen(PORT, () => console.log(`App listening on port ${PORT} 🚀🔥`));
   })
   .catch((err) => {
     console.log(err);
-  });*/
+  });

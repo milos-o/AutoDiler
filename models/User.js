@@ -31,6 +31,9 @@ const User = sequelize.define('user', {
    type: Sequelize.BOOLEAN,
    defaultValue: false
   },
+  googleId: {
+    type: Sequelize.STRING,
+  },
   verificationToken: {
     type: Sequelize.STRING,
   },

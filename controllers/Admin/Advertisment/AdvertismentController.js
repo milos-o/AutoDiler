@@ -27,10 +27,10 @@ const postAddAdvertisment = async (req, res, next) => {
   if (!errors.isEmpty()) {
     return res.status(422).json(errors.array());
   }
-
+  let userId = 10;
   try {
     const result = await Advertisment.create({
-      userId: req.user.id,
+      userId: userId,
       title:title,
       transmission:transmission,
       fuel: fuel,
@@ -46,7 +46,7 @@ const postAddAdvertisment = async (req, res, next) => {
     if (images) {
       images.forEach((image) => {
         Images.create({
-          path: image.path,
+          path: image.location,
           advertismentId: result.id,
         });
       });

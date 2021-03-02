@@ -25,3 +25,15 @@ module.exports.sendConfirmationEmail = (name, email, confirmationCode) => {
         </div>`,
   }).catch(err => console.log(err));
 };
+
+module.exports.passwordResetLink = (email, resetCode) => {
+  transport.sendMail({
+    from: user,
+    to: email,
+    subject: "Password reset",
+    html: `
+    <p>You requested a password reset</p>
+    <p>Click this <a href="http://localhost:3000/reset/${resetCode}">link</a> to set a new password.</p>
+  `,
+  }).catch(err => console.log(err));
+};
