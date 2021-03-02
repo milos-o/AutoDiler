@@ -3,6 +3,7 @@ const User = require("../../models/User");
 const Comment = require("../../models/Comment");
 const CarModel = require("../../models/Model");
 const Brand = require("../../models/Brand");
+const Images = require("../../models/Images");
 const bcrypt = require("bcrypt");
 var jwt = require("jsonwebtoken");
 const passport = require("passport");
@@ -36,7 +37,7 @@ const register = async (req, res, next) => {
     verificationToken: token,
     location: location
   });
-  console.log(token);
+  //console.log(token);
   nodemailer.sendConfirmationEmail(name, email, verificationToken);
   return res.status(200).json(user);
   } catch (err) {
@@ -104,10 +105,10 @@ const myAdvertisment = async (req, res, next) => {
             attributes: ["id","name"],
         }
     },
-    /*{
+    {
       model:Images,
-      required:true,
-    },*/
+      attributes:["path"]
+    },
   ],
   });
     return res.status(200).json(result);
@@ -229,9 +230,11 @@ async function addNewAdd(req,res,next){
 
     })
     if (images) {
+      console.log("test")
+      console.log(req.files);
       images.forEach((image) => {
         Images.create({
-          path: image.path,
+          path: image.location,
           advertismentId: add.id,
         });
       });

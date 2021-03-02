@@ -30,10 +30,10 @@ async function getAddByID(req,res,next){
                 required:true,
                 attributes:["id","name","email"],
             },
-           /* {
+            {
                 model:Images,
-                required:true,
-            },*/
+                attributes:["path"]
+            },
         ],
         })
         if(!add){
@@ -73,10 +73,10 @@ async function getAllAdds(req,res,next){
                     attributes:["id","name","email"]
                     
                 },
-               /* {
+                {
                     model:Images,
-                    required:true,
-                },*/
+                    attributes:["path"]
+                },
             ],
             offset:((pageNumber-1)*20),
             limit:20,
@@ -111,11 +111,10 @@ async function getAddsByUser(req,res,next){
                         attributes: ["id","name"],
                     }
                 },
-
-                /*{
+                {
                     model:Images,
-                    required:true,
-                },*/
+                    attributes:["path"]
+                },
             ]
         });
         res.status(200).json(adds);
@@ -232,10 +231,10 @@ async function getFilteredAdds(req,res,next){
                     attributes:["id","name","email"],
                     
                 },
-                /*{
+                {
                     model:Images,
-                    required:true,
-                },*/
+                    attributes:["path"]
+                },
             ],
             
         }
