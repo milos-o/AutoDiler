@@ -10,6 +10,9 @@ const { isAdmin, isAuth } = require("../middleware/auth");
 
 const router = express.Router();
 
+var multer = require("multer");
+var upload = multer({ dest: "images/" });
+
 //Protected Route.
 router.get("/profile", (req, res) => {
   res.send(`<h1>${req.user.displayName}'s Profile Page</h1>`);
@@ -58,7 +61,7 @@ router.post(
 
 router.get("/my-advertisment", isAuth,UserController.myAdvertisment);
 
-router.post("/advertisment",isAuth,UserController.addNewAdd);
+router.post("/advertisment",isAuth,upload.any(),UserController.addNewAdd);
 
 router.put("/advertisment/:addId",isAuth,UserController.editAdd);
 

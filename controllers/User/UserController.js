@@ -93,7 +93,12 @@ const myAdvertisment = async (req, res, next) => {
             model:Brand,
             attributes: ["id","name"],
         }
-    }],
+    },
+    /*{
+      model:Images,
+      required:true,
+    },*/
+  ],
   });
     return res.status(200).json(result);
   } catch (err) {
@@ -203,6 +208,7 @@ const postNewPassword = async (req, res, next) => {
 async function addNewAdd(req,res,next){
   try {
     let userId=req.user.id;
+    let images = req.files;
     let add = await Advertisment.create({
       title:req.body.title,
       description:req.body.description,
@@ -216,6 +222,14 @@ async function addNewAdd(req,res,next){
       modelId:req.body.model,
 
     })
+    if (images) {
+      images.forEach((image) => {
+        Images.create({
+          path: image.path,
+          advertismentId: add.id,
+        });
+      });
+    }
     res.status(201).json(add);
   } catch (error) {
     if(!error.statusCode) error.statusCode=400;

@@ -2,6 +2,7 @@ const { Model } = require('sequelize');
 const Advertisment = require('../../models/Advertisment');
 const Sequelize = require('sequelize');
 const User = require('../../models/User');
+const Images = require('../../models/Images');
 const CarModel=require('../../models/Model');
 const Brand=require('../../models/Brand');
 const Comment=require('../../models/Comment');
@@ -28,7 +29,12 @@ async function getAddByID(req,res,next){
                 model:User,
                 required:true,
                 attributes:["id","name","email"],
-            },],
+            },
+           /* {
+                model:Images,
+                required:true,
+            },*/
+        ],
         })
         if(!add){
             let err = new Error("Add doesnt exist");
@@ -66,7 +72,11 @@ async function getAllAdds(req,res,next){
                     required:true,
                     attributes:["id","name","email"]
                     
-                }
+                },
+               /* {
+                    model:Images,
+                    required:true,
+                },*/
             ],
             offset:((pageNumber-1)*20),
             limit:20,
@@ -100,7 +110,12 @@ async function getAddsByUser(req,res,next){
                         model:Brand,
                         attributes: ["id","name"],
                     }
-                }
+                },
+
+                /*{
+                    model:Images,
+                    required:true,
+                },*/
             ]
         });
         res.status(200).json(adds);
@@ -153,11 +168,11 @@ async function getFilteredAdds(req,res,next){
         where1['kw']={
             [Op.between]:[req.query.minKw,req.query.maxKw]
         }
-    }else if(req.query.minCC){
+    }else if(req.query.minKw){
         where1['kw']={
             [Op.gte]:req.query.minKw
          }
-    }else if(req.query.maxCC){
+    }else if(req.query.maxKw){
         where1['kw']={
             [Op.lte]:req.query.maxKw
          }
@@ -216,7 +231,11 @@ async function getFilteredAdds(req,res,next){
                     required:true,
                     attributes:["id","name","email"],
                     
-                }
+                },
+                /*{
+                    model:Images,
+                    required:true,
+                },*/
             ],
             
         }
