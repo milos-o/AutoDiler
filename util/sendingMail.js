@@ -6,10 +6,8 @@ const user = process.env.USER;
 const pass = process.env.PASSWORD;
 
 
-process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
-
 const transport = nodemailer.createTransport({
-  service: "Gmail",
+  service: "gmail",
   auth: {
     user: user,
     pass: pass,
