@@ -70,7 +70,7 @@ router.post("/comment/:addId",isAuth,UserController.addComment);
 
 router.delete("/comment/:commentId",isAuth,UserController.deleteComment);
 
-router.get("/confirmation/:code", UserController.verifyEmail);
+router.get("/confirm/:code", UserController.verifyEmail);
 
 router.get("/reset/:token", UserController.getNewPassword);
 
