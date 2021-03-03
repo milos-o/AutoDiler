@@ -37,7 +37,7 @@ const register = async (req, res, next) => {
     verificationToken: token,
     location: location
   });
-  console.log(token);
+  //console.log(token);
   nodemailer.sendConfirmationEmail(name, email, token);
   return res.status(200).json(user);
   } catch (err) {
