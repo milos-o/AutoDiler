@@ -1,5 +1,5 @@
 {
-  "name": "AutoDiler",
+  "name": "autodiler",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
@@ -36,7 +36,7 @@
     "sequelize": "^6.5.0"
   },
   "engines": {
-    "node": "12.16.1",
-    "npm": "7.5.2"
+    "node": "14.15.4",
+    "npm": "6.14.10"
   }
 }

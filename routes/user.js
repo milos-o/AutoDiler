@@ -9,6 +9,9 @@ const { isAdmin, isAuth } = require("../middleware/auth");
 
 const router = express.Router();
 
+const upload = require("../util/file-upload");
+const multipleUpload = upload.any();
+
 //Protected Route.
 router.get("/profile", (req, res) => {
   res.send(`<h1>${req.user.displayName}'s Profile Page</h1>`);
@@ -57,7 +60,7 @@ router.post(
 
 router.get("/my-advertisment", isAuth,UserController.myAdvertisment);
 
-router.post("/advertisment",isAuth,UserController.addNewAdd);
+router.post("/advertisment",isAuth,multipleUpload,UserController.addNewAdd);
 
 router.put("/advertisment/:addId",isAuth,UserController.editAdd);
 
@@ -67,7 +70,7 @@ router.post("/comment/:addId",isAuth,UserController.addComment);
 
 router.delete("/comment/:commentId",isAuth,UserController.deleteComment);
 
-router.get("/confirmation/:code", isAuth,UserController.verifyEmail);
+router.get("/confirmation/:code", UserController.verifyEmail);
 
 router.get("/reset/:token", UserController.getNewPassword);
 

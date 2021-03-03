@@ -7,7 +7,7 @@ const sequelize = new Sequelize('autodiler', process.env.RDS_USERNAME, process.e
   port: process.env.RDS_PORT
 });
 
-module.exports = sequelize;
 
+module.exports = sequelize;
 
 

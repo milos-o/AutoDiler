@@ -9,7 +9,7 @@ router.get("/adds",publicController.getAllAdds);
 //pretraga
 router.get("/adds/search",publicController.getFilteredAdds);
 //oglasi odredjenog korisnika 
-router.get("/adds/:userId",publicController.getAddsByUser);
+router.get("/userAdds/:userId",publicController.getAddsByUser);
 //komentari za konkretni oglas
 router.get("/comments/:addId",publicController.getAddComments);
 //postavljanje pitanja
