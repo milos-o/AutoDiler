@@ -81,6 +81,7 @@ const verifyEmail = async (req, res, next) => {
       return res.status(404).send({ message: "User Not found." });
     }
     user.emailVerified = true;
+    user.save()
     return res.status(200).json(user);
   } catch (err) {
     if (!err.statusCode) {
