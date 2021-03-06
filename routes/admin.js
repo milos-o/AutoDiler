@@ -1,5 +1,5 @@
 const express = require("express");
-const { body, validationResult } = require("express-validator");
+const { check, body } = require("express-validator/check");
 
 const adminCategories = require("../controllers/Admin/Categories/CategoriesController");
 const adminBrands = require("../controllers/Admin/Brand/BrandController");
@@ -7,6 +7,7 @@ const adminModels = require("../controllers/Admin/Models/ModelsController");
 const adminAdvertisment = require("../controllers/Admin/Advertisment/AdvertismentController");
 const adminComments = require("../controllers/Admin/Comments/CommentsController");
 const adminContact = require("../controllers/Admin/Contact/ContactController");
+const adminUsers = require("../controllers/Admin/User/UserController");
 
 const router = express.Router();
 
@@ -171,24 +172,50 @@ router.get("/auth-user", (req, res, next) => {
   return res.status(200).json(req.user);
 });
 
-router.post("/image-upload", function (req, res) {
-  multipleUpload(req, res, function (err) {
-    console.log(req.files);
-    const urlOfImages = [];
-    if (err) {
-      return res
-        .status(422)
-        .send({
-          errors: [{ title: "File Upload Error", detail: err.message }],
-        });
-    }
+// routes for users begin
+router.post(
+  "/create-user",
+  [
+    check("email")
+      .isEmail()
+      .withMessage("Please enter a valid email.")
+      .normalizeEmail(),
+    body(
+      "password",
+      "Please enter a password with only numbers and text and at least 5 characters."
+    )
+      .isLength({ min: 5 })
+      .isAlphanumeric()
+      .trim(),
+    body("name").isString(),
+    body("location").isString(),
+  ],
+  adminUsers.postAddUser
+);
 
-    req.files.forEach((image) => {
-      urlOfImages.push(image.location);
-    });
+router.post(
+  "/edit-user",
+  [
+    check("email")
+      .isEmail()
+      .withMessage("Please enter a valid email.")
+      .normalizeEmail(),
+    body(
+      "password",
+      "Please enter a password with only numbers and text and at least 5 characters."
+    )
+      .isLength({ min: 5 })
+      .isAlphanumeric()
+      .trim(),
+    body("name").isString(),
+    body("location").isString(),
+  ],
+  adminUsers.postEditUser
+);
 
-    return res.json(urlOfImages);
-  });
-});
+router.get("/all-users", adminUsers.getAllUsers);
+
+router.delete("/delete-user", adminUsers.postDeleteUser);
+// routes for users end
 
 module.exports = router;
