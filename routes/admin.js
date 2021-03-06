@@ -236,6 +236,7 @@ router.post(
 );
 
 router.get("/all-users", adminUsers.getAllUsers);
+router.get("/user/:userId",adminUsers.singleUser)
 
 router.delete("/delete-user", adminUsers.postDeleteUser);
 

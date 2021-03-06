@@ -88,9 +88,23 @@ const postDeleteUser = async (req, res, next) => {
   }
 };
 
+async function singleUser(req,res,next){
+  try {
+    let id = req.params.userId;
+    const users = await User.findByPk(id);
+      return res.status(200).json(users);
+   } catch (err) {
+     if (!err.statusCode) {
+       err.statusCode = 500;
+     }
+     next(err);
+   }
+}
+
 module.exports = {
   postAddUser,
   postEditUser,
   getAllUsers,
   postDeleteUser,
+  singleUser
 };
