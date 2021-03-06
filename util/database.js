@@ -6,8 +6,6 @@ const sequelize = new Sequelize(process.env.RDS_DBNAME, process.env.RDS_USERNAME
   host: process.env.RDS_HOSTNAME,
   port: process.env.RDS_PORT
 });
-});
-
 
 module.exports = sequelize;
 
