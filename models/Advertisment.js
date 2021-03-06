@@ -32,6 +32,10 @@ const Advertisment = sequelize.define('advertisment', {
     type: Sequelize.INTEGER,
     allowNull: false
   },
+  price:{
+    type: Sequelize.INTEGER,
+    allowNull: false
+  },
   cubic: {
     type: Sequelize.INTEGER,
     allowNull: false

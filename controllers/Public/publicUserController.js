@@ -7,6 +7,7 @@ const CarModel=require('../../models/Model');
 const Brand=require('../../models/Brand');
 const Comment=require('../../models/Comment');
 const Contact = require('../../models/Contact');
+const Category = require('../../models/Category');
 const Op=Sequelize.Op;
 
 async function getAddByID(req,res,next){
@@ -17,13 +18,20 @@ async function getAddByID(req,res,next){
                id:id 
             },
             attributes:{exclude:["modelId","userId"]},
-            include:[{
+            include:[{      
                 model:CarModel,
                 attributes: ["id","name"],
-                include:{
+                include:[{
                     model:Brand,
                     attributes: ["id","name"],
+                    
+                },
+                {
+                    model:Category,
+                    attributes:["id","name"],
+ 
                 }
+                ]
             },
             {
                 model:User,
@@ -58,15 +66,19 @@ async function getAllAdds(req,res,next){
         let adds = await Advertisment.findAll({
             
             attributes:{exclude:["modelId","userId"]},
-            include:[
-                {       
-                    model:CarModel,
-                    attributes: ["id","name"],
-                    include:{
-                        model:Brand,
-                        attributes: ["id","name"],
-                    }
+            include:[{      
+                model:CarModel,
+                attributes: ["id","name"],
+                include:[{
+                    model:Brand,
+                    attributes: ["id","name"],    
                 },
+                {
+                    model:Category,
+                    attributes:["id","name"],
+                }
+            ]
+            },
                 {
                     model:User,
                     required:true,
@@ -106,6 +118,7 @@ async function getAddsByUser(req,res,next){
                 {
                     model:CarModel,
                     attributes: ["id","name"],
+                    
                     include:{
                         model:Brand,
                         attributes: ["id","name"],
@@ -131,6 +144,7 @@ async function getFilteredAdds(req,res,next){
     let where1={};
     let where2={};
     let where3={};
+    let where4={};
     
     if(req.query.startYear && req.query.endYear){
         where1['year']={
@@ -206,6 +220,9 @@ async function getFilteredAdds(req,res,next){
     if(req.query.brandId){
         where3['id']=req.query.brandId;
     }
+    if(req.query.categoryId){
+        where4["categoryId"]=req.query.categoryId;
+    }
     try {
        
         let criteria=
@@ -217,12 +234,18 @@ async function getFilteredAdds(req,res,next){
                 {      
                     model:CarModel,
                     attributes: ["id","name"],
-                    include:{
+                    include:[{
                         model:Brand,
                         attributes: ["id","name"],
                         where:where2,
                         
                     },
+                    {
+                        model:Category,
+                        attributes:["id","name"],
+                        where:where4,
+                    }
+                ],
                     where:where3,
                 },
                 {
@@ -320,6 +343,53 @@ async function postContactForm(req,res,next){
     }
 
 }
+async function getModelByBrandAndCategory(req,res,next){
+    let where1={};
+    if(req.query.brandId) where1["brandId"]=req.query.brandId
+    if(req.query.categoryId) where1["categoryId"]=req.query.categoryId
+   
+    try {
+        
+        let result = await CarModel.findAll({
+           where: where1
+        });
+
+        res.status(200).json(result);
+    } catch (error) {
+        if(!error.statusCode){
+            error.statusCode=400;
+        }
+        next(error);
+    }
+
+}
+
+async function getBrands(req,res,next){
+    try {
+        
+        let result = await Brand.findAll();
+
+        res.status(200).json(result);
+    } catch (error) {
+        if(!error.statusCode){
+            error.statusCode=400;
+        }
+        next(error);
+    }
+}
+async function getCategories(req,res,next){
+    try {
+        
+        let result = await Category.findAll();
+
+        res.status(200).json(result);
+    } catch (error) {
+        if(!error.statusCode){
+            error.statusCode=400;
+        }
+        next(error);
+    }
+}
 
 module.exports = {
     getAddByID,
@@ -328,5 +398,8 @@ module.exports = {
     getFilteredAdds,
     getAddComments,
     postContactForm,
+    getModelByBrandAndCategory,
+    getBrands,
+    getCategories
 
 }

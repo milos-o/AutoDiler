@@ -225,6 +225,7 @@ async function addNewAdd(req,res,next){
       cubic:req.body.cubicCapacity,
       mileage:req.body.mileage,
       kw:req.body.kw,
+      price:req.body.price,
       transmission:req.body.transmission,
       year:req.body.year,
       userId: userId,
@@ -269,8 +270,9 @@ async function editAdd(req,res,next){
     if(req.body.kw) add["kw"]=req.body.kw;
     if(req.body.cubicCapacity) add["cubic"]=req.body.cubicCapacity;
     if(req.body.year) add["year"]=req.body.year;
-    if(req.body.model) add["model"]=req.body.odel;
+    if(req.body.model) add["model"]=req.body.model;
     if(req.body.description) add["description"]=req.body.description;
+    if(req.body.price) add["price"]=req.body.price;
 
     await add.save();
     await add.reload();

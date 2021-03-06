@@ -15,6 +15,10 @@ router.get("/comments/:addId",publicController.getAddComments);
 //postavljanje pitanja
 router.post("/contact",publicController.postContactForm);
 
+router.get("/model/brandAndCategory",publicController.getModelByBrandAndCategory);
+router.get("/brands",publicController.getBrands);
+router.get("/categories",publicController.getCategories);
+
 
 
 
