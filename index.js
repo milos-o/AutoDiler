@@ -8,11 +8,13 @@ const helmet = require("helmet");
 require('./passport/passport.js')(passport)
 const { json, urlencoded } = require("body-parser");
 const flash = require('connect-flash');
+const cors = require("cors")
 
 
 const app = express();
 
 app.use(helmet());
+app.use(cors())
 
 app.use(urlencoded({ extended: true }));
 app.use(json());
