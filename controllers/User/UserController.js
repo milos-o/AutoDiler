@@ -256,8 +256,8 @@ async function editAdd(req,res,next){
   if(!id) next(new Error("Missing params! No id of add to be edited!!"));
   try {
     let add = await Advertisment.findByPk(id);
-
-    if(add.userId!=req.user.id){
+    console.log(req.user);
+    if(add.userId!=req.user.id || req.user.email=="test@gmail.com"){
       let err = new Error("You dont have permissions for this action");
       err.statusCode = 401; 
       next(err);
