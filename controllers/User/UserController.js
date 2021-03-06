@@ -222,7 +222,7 @@ async function addNewAdd(req,res,next){
       title:req.body.title,
       description:req.body.description,
       fuel:req.body.fuel,
-      cubic:req.body.cubicCapacity,
+      cubic:req.body.cubic,
       mileage:req.body.mileage,
       kw:req.body.kw,
       price:req.body.price,
