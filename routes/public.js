@@ -19,6 +19,7 @@ router.get("/model/brandAndCategory",publicController.getModelByBrandAndCategory
 router.get("/brands",publicController.getBrands);
 router.get("/categories",publicController.getCategories);
 
+router.get("/brandByname/:name",publicController.getBrandByName);
 
 
 

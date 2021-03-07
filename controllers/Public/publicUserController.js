@@ -391,6 +391,24 @@ async function getCategories(req,res,next){
     }
 }
 
+async function getBrandByName(req,res,next){
+    try {
+        let name = req.params.name
+        let result = await Brand.findAll({
+            where:{
+                "name":name
+            }
+        });
+
+        res.status(200).json(result);
+    } catch (error) {
+        if(!error.statusCode){
+            error.statusCode=400;
+        }
+        next(error);
+    }
+}
+
 module.exports = {
     getAddByID,
     getAllAdds,
@@ -400,6 +418,7 @@ module.exports = {
     postContactForm,
     getModelByBrandAndCategory,
     getBrands,
-    getCategories
+    getCategories,
+    getBrandByName
 
 }
