@@ -11,7 +11,8 @@ const Model = sequelize.define('model', {
   },
   name: {
     type: Sequelize.STRING,
-    allowNull: false
+    allowNull: false,
+    unique:true
   }
 });
 
