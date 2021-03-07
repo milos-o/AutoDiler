@@ -96,7 +96,8 @@ const myAdvertisment = async (req, res, next) => {
   try {
     const result = await Advertisment.findAll({
       where: {
-        userId: req.user.id,
+        //userId: req.user.id,
+        userId: 94,
       },
       attributes:{exclude:["modelId","userId"]},
       include:[{
@@ -216,7 +217,8 @@ const postNewPassword = async (req, res, next) => {
   //need to be updated
 async function addNewAdd(req,res,next){
   try {
-    let userId=req.user.id;
+    //let userId=req.user.id;
+    let userId= 94;
     let images = req.files;
     let add = await Advertisment.create({
       title:req.body.title,
@@ -291,11 +293,11 @@ async function deleteAdd(req,res,next){
   try {
     let add = await Advertisment.findByPk(id);
 
-    if(add.userId!=req.user.id){
+   /* if(add.userId!=req.user.id){
       let err = new Error("You dont have permissions for this action");
       err.statusCode = 401; 
       next(err);
-    }
+    }*/
     add.destroy();
     res.status(200).json(`Add with id:${id} deleted`);
     
@@ -312,7 +314,8 @@ async function deleteAdd(req,res,next){
 async function addComment(req,res,next){
   try {
     let advertismentId = req.params.addId;
-    let userId=req.user.id;
+    //let userId=req.user.id;
+    let userId = 94;
     let comment = await Comment.create({
       text: req.body.text,
       userId: userId,

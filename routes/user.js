@@ -58,17 +58,17 @@ router.post(
   UserController.register
 );
 
-router.get("/my-advertisment", isAuth,UserController.myAdvertisment);
+router.get("/my-advertisment", UserController.myAdvertisment);
 
-router.post("/advertisment",isAuth,multipleUpload,UserController.addNewAdd);
+router.post("/advertisment",multipleUpload,UserController.addNewAdd);
 
-router.put("/advertisment/:addId",isAuth,UserController.editAdd);
+router.put("/advertisment/:addId",UserController.editAdd);
 
-router.delete("/advertisment/:addId",isAuth,UserController.deleteAdd);
+router.delete("/advertisment/:addId",UserController.deleteAdd);
 
-router.post("/comment/:addId",isAuth,UserController.addComment);
+router.post("/comment/:addId",UserController.addComment);
 
-router.delete("/comment/:commentId",isAuth,UserController.deleteComment);
+router.delete("/comment/:commentId",UserController.deleteComment);
 
 router.get("/confirm/:code", UserController.verifyEmail);
 
